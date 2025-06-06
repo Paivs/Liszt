@@ -3,10 +3,11 @@ const express = require('express');
 const winston = require('./logs/logger');
 const { sequelize } = require('./models');
 const routes = require('./routes');
-const swaggerDocs = require('./config/swagger');
 require('dotenv').config();
+const cors = require('cors')
 
 const app = express();
+app.use(cors())
 
 // Middleware para requisições JSON
 app.use(express.json());
@@ -15,13 +16,13 @@ app.use(express.json());
 app.use('/api', routes);
 
 // docs
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./config/swagger');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Conectar ao banco de dados e iniciar o servidor
-sequelize.sync({ force: false }).then(() => {
-    app.listen(process.env.PORT, () => {
-        winston.info(`Servidor rodando na porta ${process.env.PORT}`);
-    });
+app.listen(process.env.PORT, () => {
+  console.log('Servidor rodando na porta ' + process.env.PORT);
 });
 
 module.exports = app;

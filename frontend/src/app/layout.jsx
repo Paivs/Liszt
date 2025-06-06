@@ -3,6 +3,7 @@ import "./globals.css";
 import ThemeProvider from "@/lib/ThemeProvider";
 import { UserProvider } from "@/lib/UserContext";
 import { Toaster, toast } from "sonner";
+import { RedirectProvider } from "@/lib/redirect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <UserProvider>
             <Toaster />
+            <RedirectProvider/>
             {children}
           </UserProvider>
         </ThemeProvider>

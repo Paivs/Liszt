@@ -1,9 +1,9 @@
 // controllers/authController.js
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { User } = require('../models');
-const { secret, expiresIn } = require('../config/jwt');
-const winston = require('../logs/logger');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const { User } = require("../models");
+const { secret, expiresIn } = require("../config/jwt");
+const winston = require("../logs/logger");
 
 exports.register = async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -11,7 +11,16 @@ exports.register = async (req, res) => {
   try {
     const userExists = await User.findOne({ where: { email } });
     if (userExists) {
-      return res.status(400).json({ message: 'Usuário já existe' });
+      return res.status(400).json({ message: "Usuário já existe" });
+    }
+
+    // Validação do role
+    const allowedRoles = ["patient", "therapist", "admin"];
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({
+        message: "Role inválido",
+        allowedRoles: allowedRoles, // Opcional: informar quais roles são permitidos
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -22,14 +31,16 @@ exports.register = async (req, res) => {
       role,
     });
 
-    const token = jwt.sign({ id: user.id, role: user.role }, secret, { expiresIn });
+    const token = jwt.sign({ id: user.id, role: user.role }, secret, {
+      expiresIn,
+    });
 
     winston.info(`Novo usuário registrado: ${email}`);
 
     res.status(201).json({ token });
   } catch (error) {
     winston.error(error);
-    res.status(500).json({ message: 'Erro ao registrar usuário' });
+    res.status(500).json({ message: "Erro ao registrar usuário" });
   }
 };
 
@@ -39,21 +50,28 @@ exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(400).json({ message: 'Usuário não encontrado' });
+      return res.status(400).json({ message: "Usuário não encontrado" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Senha incorreta' });
+      return res.status(400).json({ message: "Senha incorreta" });
     }
 
-    const token = jwt.sign({ id: user.id, role: user.role }, secret, { expiresIn });
+    const token = jwt.sign({ id: user.id, role: user.role }, secret, {
+      expiresIn,
+    });
 
     winston.info(`Usuário logado: ${email}`);
 
-    res.status(200).json({ token });
+    const { id, name, email: userEmail, role } = user;
+
+    res.json({
+      token,
+      user: { id, name, email: userEmail, role },
+    });
   } catch (error) {
     winston.error(error);
-    res.status(500).json({ message: 'Erro ao fazer login' });
+    res.status(500).json({ message: "Erro ao fazer login" });
   }
 };

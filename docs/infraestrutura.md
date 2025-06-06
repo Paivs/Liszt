@@ -1,7 +1,7 @@
-# Infraestrutura do Neuman
+# Infraestrutura do Liszt
 
 ## Visão Geral
-O Neuman é hospedado em uma VPS Ubuntu na Hostinger e utiliza Coolify para deploy. A arquitetura é composta por:
+O Liszt é hospedado em uma VPS Ubuntu na Hostinger e utiliza Coolify para deploy. A arquitetura é composta por:
 
 - Frontend (Next.js)
 - Backend (Node.js)
@@ -13,7 +13,7 @@ O Neuman é hospedado em uma VPS Ubuntu na Hostinger e utiliza Coolify para depl
 ### Frontend
 - **Tecnologia**: Next.js
 - **Deploy**: Dockerfile via Coolify
-- **URL**: [A ser definida]
+- **URL**: https://lizst.laurem.com.br
 - **Dependências principais**:
   - Tailwind CSS para estilização
   - Radix UI + shadcn/ui para componentes
@@ -24,7 +24,7 @@ O Neuman é hospedado em uma VPS Ubuntu na Hostinger e utiliza Coolify para depl
 ### Backend
 - **Tecnologia**: Node.js
 - **Deploy**: Dockerfile via Coolify
-- **Porta**: 8085
+- **Porta**: 8088
 - **Endpoints**: Documentação disponível via Swagger em `/api-docs`
 
 ### Banco de Dados

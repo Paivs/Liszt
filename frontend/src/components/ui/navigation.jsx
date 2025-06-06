@@ -65,7 +65,7 @@ export default function Navigation({}) {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <Link href="/settings" className={navigationMenuTriggerStyle()}>
-                Settings
+                Configurações
               </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
@@ -90,6 +90,11 @@ export default function Navigation({}) {
             <NavigationMenuItem>
               <Link href="/appointment" className={navigationMenuTriggerStyle()}>
                 Sessões
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/settings" className={navigationMenuTriggerStyle()}>
+                Configurações
               </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
