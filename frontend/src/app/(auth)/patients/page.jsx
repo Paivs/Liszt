@@ -43,29 +43,29 @@ const TerapeutaPacientes = () => {
   const handleAddPaciente = (e) => {
     e.preventDefault();
     if (!novoPaciente.nome || !novoPaciente.email) {
-      toast({ title: "Erro", description: "Nome e email são obrigatórios.", variant: "destructive" });
+      toast.error("Erro", { description: "Nome e email são obrigatórios.", variant: "destructive" });
       return;
     }
     const paciente = { id: Date.now(), ...novoPaciente };
     salvarPacientes([...pacientes, paciente]);
-    toast({ title: "Sucesso!", description: "Paciente adicionado." });
+    toast.success("Sucesso!", {description: "Paciente adicionado." });
     setNovoPaciente({ nome: '', email: '', telefone: '', observacoes: '' });
   };
 
   const handleEditPaciente = (e) => {
     e.preventDefault();
     if (!editandoPaciente.nome || !editandoPaciente.email) {
-      toast({ title: "Erro", description: "Nome e email são obrigatórios.", variant: "destructive" });
+      toast.error("Erro", {description: "Nome e email são obrigatórios.", variant: "destructive" });
       return;
     }
     salvarPacientes(pacientes.map(p => p.id === editandoPaciente.id ? editandoPaciente : p));
-    toast({ title: "Sucesso!", description: "Paciente atualizado." });
+    toast.success("Sucesso!", { description: "Paciente atualizado." });
     setEditandoPaciente(null);
   };
 
   const removerPaciente = (id) => {
     salvarPacientes(pacientes.filter(p => p.id !== id));
-    toast({ title: "Paciente removido", description: "O paciente foi removido." });
+    toast("Paciente removido", { description: "O paciente foi removido." });
   };
 
   const iniciarEdicao = (paciente) => {

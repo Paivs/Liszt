@@ -55,8 +55,7 @@ const Agendamento = () => {
     e.preventDefault();
     
     if (!novoAgendamento.data || !novoAgendamento.horario || !novoAgendamento.terapeuta || !novoAgendamento.tipo) {
-      toast({
-        title: "Erro",
+      toast("Erro", {
         description: "Por favor, preencha todos os campos obrigatórios.",
         variant: "destructive"
       });
@@ -72,8 +71,7 @@ const Agendamento = () => {
     const novosAgendamentos = [...agendamentos, agendamento];
     salvarAgendamentos(novosAgendamentos);
 
-    toast({
-      title: "Sucesso!",
+    toast("Sucesso!", {
       description: "Consulta agendada com sucesso!"
     });
 
@@ -90,8 +88,7 @@ const Agendamento = () => {
     const novosAgendamentos = agendamentos.filter(ag => ag.id !== id);
     salvarAgendamentos(novosAgendamentos);
     
-    toast({
-      title: "Agendamento removido",
+    toast("Agendamento removido", {
       description: "O agendamento foi removido com sucesso."
     });
   };

@@ -98,8 +98,8 @@ const DiarioUnificado = () => {
   const handleEmocaoSubmit = (e) => {
     e.preventDefault();
     if (!novaEmocao.emocao || !novaEmocao.descricao) {
-      toast({
-        title: "Erro",
+      toast(
+        "Erro", {
         description: "Preencha emoção e descrição.",
         variant: "destructive",
       });
@@ -112,7 +112,7 @@ const DiarioUnificado = () => {
       timestamp: new Date().toISOString(),
     };
     salvarEmocoes([...emocoes, emocao]);
-    toast({ title: "Sucesso!", description: "Emoção registrada!" });
+    toast("Sucesso!", {description: "Emoção registrada!" });
     setNovaEmocao({
       data: new Date().toISOString().split("T")[0],
       emocao: "",
@@ -125,8 +125,7 @@ const DiarioUnificado = () => {
   const handleSonhoSubmit = (e) => {
     e.preventDefault();
     if (!novoSonho.titulo || !novoSonho.descricao) {
-      toast({
-        title: "Erro",
+      toast("Erro", {
         description: "Preencha título e descrição do sonho.",
         variant: "destructive",
       });
@@ -138,7 +137,7 @@ const DiarioUnificado = () => {
       timestamp: new Date().toISOString(),
     };
     salvarSonhos([...sonhos, sonho]);
-    toast({ title: "Sucesso!", description: "Sonho registrado!" });
+    toast("Sucesso!", { description: "Sonho registrado!" });
     setNovoSonho({
       data: new Date().toISOString().split("T")[0],
       titulo: "",
@@ -152,13 +151,12 @@ const DiarioUnificado = () => {
 
   const removerEmocao = (id) => {
     salvarEmocoes(emocoes.filter((em) => em.id !== id));
-    toast({ title: "Registro removido", description: "Emoção removida." });
+    toast("Registro removido", { description: "Emoção removida." });
   };
 
   const removerSonho = (id) => {
     salvarSonhos(sonhos.filter((s) => s.id !== id));
-    toast({
-      title: "Sonho removido",
+    toast("Sonho removido", {
       description: "Registro de sonho removido.",
     });
   };

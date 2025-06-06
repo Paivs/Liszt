@@ -93,6 +93,11 @@ export default function Navigation({}) {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
+              <Link href="/journal" className={navigationMenuTriggerStyle()}>
+                Diários
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
               <Link href="/settings" className={navigationMenuTriggerStyle()}>
                 Configurações
               </Link>

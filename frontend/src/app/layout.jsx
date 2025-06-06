@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/lib/ThemeProvider";
 import { UserProvider } from "@/lib/UserContext";
-import { Toaster, toast } from "sonner";
+import { Toaster } from "sonner";
 import { RedirectProvider } from "@/lib/redirect";
 
 const geistSans = Geist({
@@ -23,14 +23,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <UserProvider>
-            <Toaster />
-            <RedirectProvider/>
-            {children}
+            {/* <RedirectProvider> */}
+              <Toaster />
+              {children}
+            {/* </RedirectProvider> */}
           </UserProvider>
         </ThemeProvider>
       </body>

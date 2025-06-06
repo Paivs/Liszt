@@ -52,17 +52,18 @@ export default function Navbar({
       return [
         { text: "Dashboard", href: "/dashboard" },
         { text: "Diários", href: "/journal" },
-        { text: "Pacientes", href: "/patients" },
         { text: "Sessões", href: "/appointment" },
         { text: "Configurações", href: "/settings" },
       ];
     }
-
+    
     if (user.role === "therapist") {
       return [
         { text: "Dashboard", href: "/dashboard" },
         { text: "Pacientes", href: "/patients" },
+        { text: "Diários", href: "/journal" },
         { text: "Sessões", href: "/appointment" },
+        { text: "Configurações", href: "/settings" },
       ];
     }
 
