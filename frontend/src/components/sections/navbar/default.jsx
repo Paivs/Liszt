@@ -73,7 +73,7 @@ export default function Navbar({
   const renderMenu = () => {
     if (!isAuthenticated) {
       return (
-        <NavbarComponent>
+        <NavbarComponent className={"container mx-auto"}>
           <NavbarLeft>
             <Link href={homeUrl} className="flex items-center gap-2 text-xl font-bold">
               {logo}
@@ -126,7 +126,7 @@ export default function Navbar({
 
     // Renderiza o menu para quando o usuário estiver logado como paciente ou terapeuta
     return (
-      <NavbarComponent>
+      <NavbarComponent className={"container mx-auto"}>
         <NavbarLeft>
           <Link href={homeUrl} className="flex items-center gap-2 text-xl font-bold">
             {logo}
