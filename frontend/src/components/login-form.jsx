@@ -14,7 +14,6 @@ import { useUser } from "@/lib/UserContext";
 export function LoginForm({ className, ...props }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userType] = useState("client"); // Você pode tornar isso dinâmico se necessário
   const [caseCode] = useState(""); // Adicione um input para isso se necessário
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -27,7 +26,7 @@ export function LoginForm({ className, ...props }) {
     setError(null);
 
     try {
-      const { user } = await loginUser(email, password, userType, caseCode);
+      const { user } = await loginUser(email, password);
 
       toast.success(`Bem-vindo, ${user.name}!`, {
         description: "Login realizado com sucesso.",
@@ -38,10 +37,12 @@ export function LoginForm({ className, ...props }) {
       setTimeout(() => {
         login(user);
         // Redireciona com base no tipo de usuário ou outra lógica
-        if (userType === "client") {
-          router.push("/dashboard");
-        } else {
-          router.push("/admin");
+        if (user.role === "patient") {
+          router.push("/patient/dashboard");
+        } else if (user.role === "therapist") {
+          router.push("/admin/dashboard");
+        }else{
+          throw new Error("Erro ao identificar seu usuário")
         }
       }, 2000);
     } catch (err) {
@@ -83,7 +84,7 @@ export function LoginForm({ className, ...props }) {
           <div className="flex items-center">
             <Label htmlFor="password">Senha</Label>
             <Link
-              href="#"
+              href="/forgot-password"
               className="ml-auto text-sm underline-offset-4 hover:underline"
             >
               Esqueceu sua senha

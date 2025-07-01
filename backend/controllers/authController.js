@@ -1,26 +1,20 @@
 // controllers/authController.js
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { User } = require("../models");
+const { User, Patient } = require("../models");
 const { secret, expiresIn } = require("../config/jwt");
 const winston = require("../logs/logger");
 
 exports.register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
+
+  role = "patient"
+  //role = "therapist"
 
   try {
     const userExists = await User.findOne({ where: { email } });
     if (userExists) {
       return res.status(400).json({ message: "Usuário já existe" });
-    }
-
-    // Validação do role
-    const allowedRoles = ["patient", "therapist", "admin"];
-    if (!allowedRoles.includes(role)) {
-      return res.status(400).json({
-        message: "Role inválido",
-        allowedRoles: allowedRoles, // Opcional: informar quais roles são permitidos
-      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,6 +24,17 @@ exports.register = async (req, res) => {
       password_hash: hashedPassword,
       role,
     });
+
+    const patient = await Patient.create({
+      name,
+      user_id: user.id,
+      email,
+      cpf: "",
+      phone: "",
+      emergency_contact_name: "",
+      emergency_contact_phone: "",
+      address: ""
+    })
 
     const token = jwt.sign({ id: user.id, role: user.role }, secret, {
       expiresIn,
@@ -75,3 +80,8 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Erro ao fazer login" });
   }
 };
+
+
+exports.resetPassword = async (req, res) => {
+  
+}

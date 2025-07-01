@@ -21,3 +21,87 @@
 {"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
 {"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
 {"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Novo usuário registrado: joao@example.com"}
+{"level":"info","message":"Usuário logado: joao@example.com"}
+{"errors":[{"instance":{"created_at":"2025-06-07T21:37:43.157Z","email":"gg@mail.com","id":"da89b9aa-ac1b-4530-8eac-e81b233c1293","password_hash":"$2b$10$zOra5pZb.XQ61Q2Yv9WdROt5ZQ/6o2Zp7pvl47daPYrlaYqJj0ZES","role":"therapist","updated_at":"2025-06-07T21:37:43.157Z"},"message":"User.name cannot be null","origin":"CORE","path":"name","type":"notNull Violation","validatorArgs":[],"validatorKey":"is_null","validatorName":null,"value":null}],"level":"error","name":"SequelizeValidationError"}
+{"level":"info","message":"Novo usuário registrado: gg@mail.com"}
+{"level":"info","message":"Usuário logado: gg@mail.com"}
+{"level":"info","message":"Novo usuário registrado: contatogppe@gmail.com"}
+{"level":"info","message":"Usuário logado: contatogppe@gmail.com"}
+{"level":"info","message":"Novo usuário registrado: liszt@laurem.com.br"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Novo usuário registrado: liszt@laurem.com.br"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Novo usuário registrado: gg@mail.com"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"error","message":"Erro ao agendar sessão: Argument passed to findByPk is invalid: [object Promise]","stack":"Error: Argument passed to findByPk is invalid: [object Promise]\n    at Patient.findByPk (/home/paivs/Dev/Liszt/backend/node_modules/sequelize/lib/model.js:1219:13)\n    at exports.create (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:28:35)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao agendar sessão: Argument passed to findByPk is invalid: [object Promise]","stack":"Error: Argument passed to findByPk is invalid: [object Promise]\n    at Patient.findByPk (/home/paivs/Dev/Liszt/backend/node_modules/sequelize/lib/model.js:1219:13)\n    at exports.create (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:29:35)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Usuário logado: fgbhdassd@fndj.com"}
+{"level":"info","message":"Usuário logado: fgbhdassd@fndj.com"}
+{"level":"error","message":"Erro ao agendar sessão: Argument passed to findByPk is invalid: [object SequelizeInstance:Patient]","stack":"Error: Argument passed to findByPk is invalid: [object SequelizeInstance:Patient]\n    at Patient.findByPk (/home/paivs/Dev/Liszt/backend/node_modules/sequelize/lib/model.js:1219:13)\n    at exports.create (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:32:35)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao agendar sessão: Cannot access 'Appointment' before initialization","stack":"ReferenceError: Cannot access 'Appointment' before initialization\n    at exports.create (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:41:22)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao agendar sessão: Cannot read properties of undefined (reading 'findOne')","stack":"TypeError: Cannot read properties of undefined (reading 'findOne')\n    at exports.create (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:41:40)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao agendar sessão: Cannot read properties of undefined (reading 'findOne')","stack":"TypeError: Cannot read properties of undefined (reading 'findOne')\n    at exports.create (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:40:40)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao agendar sessão: Cannot read properties of undefined (reading 'findOne')","stack":"TypeError: Cannot read properties of undefined (reading 'findOne')\n    at exports.create (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:42:40)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao agendar sessão: Cannot read properties of undefined (reading 'findOne')","stack":"TypeError: Cannot read properties of undefined (reading 'findOne')\n    at exports.create (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:42:40)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"expiredAt":"2025-06-09T19:02:57.000Z","level":"error","message":"jwt expired","name":"TokenExpiredError"}
+{"expiredAt":"2025-06-09T19:02:57.000Z","level":"error","message":"jwt expired","name":"TokenExpiredError"}
+{"level":"info","message":"Usuário logado: fgbhdassd@fndj.com"}
+{"level":"info","message":"Usuário logado: fgbhdassd@fndj.com"}
+{"level":"info","message":"Usuário logado: fgbhdassd@fndj.com"}
+{"level":"info","message":"Usuário logado: fgbhdassd@fndj.com"}
+{"level":"info","message":"[96365e58-e948-4bf5-b0cb-53fbe32d9038] consulta destruída"}
+{"level":"info","message":"[1b36b6c5-d874-4eb9-a08a-ef86d4d750bb] consulta destruída"}
+{"level":"info","message":"[6917193a-288f-4dbe-b6c2-f29ea890ecca] consulta destruída"}
+{"level":"info","message":"[6fd42ea4-545e-4346-a1af-146dca27ffd8] consulta destruída"}
+{"expiredAt":"2025-06-09T18:14:16.000Z","level":"error","message":"jwt expired","name":"TokenExpiredError"}
+{"expiredAt":"2025-06-09T18:14:16.000Z","level":"error","message":"jwt expired","name":"TokenExpiredError"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"expiredAt":"2025-06-09T21:45:20.000Z","level":"error","message":"jwt expired","name":"TokenExpiredError"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Usuário logado: fgbhdassd@fndj.com"}
+{"level":"info","message":"Novo usuário registrado: teste@mail.com"}
+{"level":"info","message":"Usuário logado: teste@mail.com"}
+{"level":"info","message":"Usuário logado: teste@mail.com"}
+{"level":"info","message":"Usuário logado: teste@mail.com"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Novo usuário registrado: roberval@mail.com"}
+{"level":"info","message":"Usuário logado: roberval@mail.com"}
+{"level":"info","message":"Novo usuário registrado: thelma@mail.com"}
+{"level":"info","message":"Novo usuário registrado: liszt@laurem.com.br"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"info","message":"Usuário logado: liszt@laurem.com.br"}
+{"level":"error","message":"Erro ao buscar sessões do usuário: Cannot read properties of null (reading 'id')","stack":"TypeError: Cannot read properties of null (reading 'id')\n    at exports.getAllByUser (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:143:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao buscar sessões do usuário: Cannot read properties of null (reading 'id')","stack":"TypeError: Cannot read properties of null (reading 'id')\n    at exports.getAllByUser (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:143:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao buscar sessões do usuário: Cannot read properties of null (reading 'id')","stack":"TypeError: Cannot read properties of null (reading 'id')\n    at exports.getAllByUser (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:145:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao buscar sessões do usuário: Cannot read properties of null (reading 'id')","stack":"TypeError: Cannot read properties of null (reading 'id')\n    at exports.getAllByUser (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:145:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao buscar sessões do usuário: Cannot read properties of null (reading 'id')","stack":"TypeError: Cannot read properties of null (reading 'id')\n    at exports.getAllByUser (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:137:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao buscar sessões do usuário: Cannot read properties of null (reading 'id')","stack":"TypeError: Cannot read properties of null (reading 'id')\n    at exports.getAllByUser (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:137:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao buscar sessões do usuário: Cannot read properties of null (reading 'id')","stack":"TypeError: Cannot read properties of null (reading 'id')\n    at exports.getAllByUser (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:134:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao buscar sessões do usuário: Cannot read properties of null (reading 'id')","stack":"TypeError: Cannot read properties of null (reading 'id')\n    at exports.getAllByUser (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:134:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao buscar sessões do usuário: Cannot read properties of null (reading 'id')","stack":"TypeError: Cannot read properties of null (reading 'id')\n    at exports.getAllByUser (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:136:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"error","message":"Erro ao buscar sessões do usuário: Cannot read properties of null (reading 'id')","stack":"TypeError: Cannot read properties of null (reading 'id')\n    at exports.getAllByUser (/home/paivs/Dev/Liszt/backend/controllers/appointmentController.js:136:43)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"}
+{"level":"info","message":"Novo usuário registrado: thelma@mail.com"}
+{"level":"info","message":"Usuário logado: thelma@mail.com"}
+{"level":"info","message":"Usuário logado: gustavo.paiva.gp1@gmail.com"}
+{"level":"info","message":"Novo usuário registrado: gp@mail.com"}
+{"level":"info","message":"Usuário logado: gp@mail.com"}
+{"level":"info","message":"Usuário logado: thelma@mail.com"}
+{"level":"info","message":"Usuário logado: gp@mail.com"}
+{"level":"info","message":"Usuário logado: gp@mail.com"}
+{"level":"info","message":"Usuário logado: thelma@mail.com"}
+{"level":"info","message":"Usuário logado: thelma@mail.com"}
+{"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"level":"error"}
+{"level":"info","message":"Usuário logado: gp@mail.com"}
+{"level":"info","message":"Usuário logado: gp@mail.com"}

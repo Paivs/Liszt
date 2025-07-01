@@ -125,5 +125,67 @@ liszt/
 
 O deploy é feito automaticamente via **Coolify** sempre que há um push na branch `main`. Os Dockerfiles necessários estão na raiz de cada projeto (**frontend**/**backend**).
 
+## Estrutura de Branches
+
+### main
+- Ambiente de produção
+- Contém o código estável e testado que está em produção
+- Apenas código que passou por todos os testes e homologação deve ser mergeado aqui
+
+### staging
+- Ambiente de homologação
+- Usada para testes de integração e homologação
+- Código das features será mergeado aqui primeiro para testes antes de ir para produção
+
+## Fluxo de Trabalho
+
+1. **Desenvolvimento**
+   - Criar branches de feature a partir de staging
+   - Nomear branches seguindo o padrão: `feature/nome-da-feature`
+   - Desenvolver e testar localmente
+
+2. **Homologação**
+   - Mergear features para staging para testes
+   - Realizar testes de integração
+   - Validar funcionalidades
+
+3. **Produção**
+   - Após validação em staging
+   - Mergear de staging para main
+   - Deploy para produção
+
+## Comandos Git Úteis
+
+```bash
+# Criar nova branch de feature
+git checkout staging
+git pull origin staging
+git checkout -b feature/nome-da-feature
+
+# Atualizar branch com staging
+git checkout staging
+git pull origin staging
+git checkout feature/nome-da-feature
+git merge staging
+
+# Enviar feature para homologação
+git checkout staging
+git merge feature/nome-da-feature
+git push origin staging
+
+# Enviar para produção
+git checkout main
+git merge staging
+git push origin main
+```
+
+## Boas Práticas
+
+- Sempre mantenha sua branch atualizada com staging
+- Faça commits pequenos e descritivos
+- Resolva conflitos em sua branch antes de fazer merge
+- Teste suas alterações antes de enviar para staging
+- Mantenha a comunicação clara sobre o status das features
+
 ## **Licença**
 Este projeto está licenciado sob a **GNU General Public License v3.0** - veja o arquivo [LICENSE](LICENSE) para mais detalhes.

@@ -47,24 +47,25 @@ CREATE TABLE dream_journal (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     patient_id UUID REFERENCES patient(id) ON DELETE CASCADE, -- Referência ao paciente
     date TIMESTAMP NOT NULL,
-    type_dream VARCHAR(100), -- pesadelo, lucido, recorrente, profético, comum, simbólico
+    type_appointment VARCHAR(100), -- pesadelo, lucido, recorrente, profético, comum, simbólico
     clarity VARCHAR(100), -- muito vago, vago, moderado, claro, muito claro
     title VARCHAR(255),
     dream_description TEXT,  -- Descrição do sonho
-    emotions_list TEXT,  -- Descrição do sonho
-    symbols_list TEXT,  -- Descrição do sonho
+    emotions_list TEXT, 
+    symbols_list TEXT, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Tabela de sessões (agendamento de sessões de terapia)
-CREATE TABLE sessions (
+-- Tabela de Appointment (agendamento de sessões de terapia)
+CREATE TABLE appointment (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     therapist_id UUID REFERENCES users(id) ON DELETE CASCADE,  -- Terapeuta responsável pela sessão
     patient_id UUID REFERENCES patient(id) ON DELETE CASCADE,    -- Paciente que será atendido
     scheduled_time TIMESTAMP NOT NULL,  -- Data e hora agendada para a sessão
-    type_session VARCHAR(100), -- individual, casal, familiar, avaliação
-    status_session varchar(100) -- pendente, aprovada, reprovada, concluída
+    type_appointment VARCHAR(100), -- individual, casal, familiar, avaliação
+    status_appointment varchar(100) -- pendente, aprovada, reprovada, concluída
+    obs TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

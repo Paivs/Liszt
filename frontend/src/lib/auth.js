@@ -1,18 +1,21 @@
 // lib/auth.js
 import { api } from "./api";
+import Cookies from "js-cookie";
 
-export async function loginUser(email, password, userType, caseCode) {
-  const payload = {
-    email,
-    password,
-    userType,
-    ...(userType === "client" && { caseCode }),
-  };
-
-  const data = await api.post("auth/login", payload);
+export async function loginUser(email, password) {
+  const data = await api.post("auth/login", { email, password });
 
   // Salva token
-  document.cookie = `token=${data.token}; path=/`;
+  Cookies.set("token", data.token, {
+    path: "/",
+    sameSite: "Lax",
+    secure: true,
+  });
+  Cookies.set("perfil", data.user.role, {
+    path: "/",
+    sameSite: "Lax",
+    secure: true,
+  });
 
   return data; // { token, user }
 }
@@ -21,6 +24,9 @@ export function logoutUser() {
   document.cookie = "token=; Max-Age=0; path=/";
 }
 
+export async function sendPasswordResetEmail(payload) {
+  const data = await api.post("auth/reset-password", payload);
+}
 
 export async function registerUser(payload) {
   const data = await api.post("auth/register", payload);

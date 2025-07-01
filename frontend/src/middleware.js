@@ -1,26 +1,40 @@
 import { NextResponse } from "next/server";
 
-const protectedPaths = ["/dashboard", "/appointment", "/settings", "/emotion-journal", "/dream-journal"];
+const protectedPrefixes = ["/admin", "/patient"];
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;
+  const token = request.cookies.get("token")?.value;
+  const perfil = request.cookies.get("perfil")?.value;
+
+  console.log("perfil: " + perfil);
   
-  // Verifica se a rota está protegida
-  // if (protectedPaths.some(path => pathname.startsWith(path))) {
-  //   // Verifica cookie de autenticação (exemplo simples)
-  //   const token = request.cookies.get("token");
-    
-  //   if (!token) {
-  //     // Redireciona para login se não autenticado
-  //     const loginUrl = new URL("/login", request.url);
-  //     return NextResponse.redirect(loginUrl);
-  //   }
-  // }
-  
-  // Continua normalmente se autorizado ou rota pública
+
+  const isProtected = protectedPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(prefix + "/")
+  );
+
+  if (isProtected) {
+    if (!token || !perfil) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (pathname.startsWith("/admin") && perfil !== "therapist") {
+      const unauthorizedUrl = new URL("/unauthorized", request.url);
+      return NextResponse.redirect(unauthorizedUrl);
+    }
+
+    if (pathname.startsWith("/patient") && perfil !== "patient") {
+      const unauthorizedUrl = new URL("/unauthorized", request.url);
+      return NextResponse.redirect(unauthorizedUrl);
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/documents/:path*", "/appointment/:path*", "/settings/:path*"],
+  matcher: ["/admin/:path*", "/patient/:path*"],
 };

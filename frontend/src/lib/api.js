@@ -28,8 +28,6 @@ export async function apiFetch(path, options = {}) {
     ...options.headers,
   };
 
-  console.log(`${process.env.NEXT_PUBLIC_API_URL}api/${path}`)
-
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/${path}`, {
       ...options,
@@ -37,11 +35,16 @@ export async function apiFetch(path, options = {}) {
     });
 
     // Token expirado
-    if (res.status === 401 || res.status === 403) {
+    if (res.status === 403) {
       toast.error("Sessão expirada. Faça login novamente.");
       document.cookie = "token=; Max-Age=0; path=/";
       setTimeout(() => redirectToLogin(), 2500);
       // throw new Error("Sessão expirada");u
+    }
+    
+
+    if (res.status === 406) {
+      return res.json();
     }
 
     if (!res.ok) {
