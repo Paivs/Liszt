@@ -4,8 +4,6 @@ const winston = require("../logs/logger");
 exports.create = async (req, res) => {
   const { therapist_id, scheduled_time, type_appointment, obs } = req.body;
 
-  console.log("user: ", req.user)
-
   const patient_id = req.user.perfilInfo.id;
 
   if (!therapist_id || !patient_id || !scheduled_time || !type_appointment) {
@@ -41,21 +39,30 @@ exports.create = async (req, res) => {
     }
 
     // Cria a consulta
-    const newAppointment = await Appointment.create({
+    const createdAppointment = await Appointment.create({
       therapist_id,
       patient_id,
       scheduled_time,
       type_appointment,
       status_appointment: "pendente",
-      obs
+      obs,
     });
 
-    return res
-      .status(201)
-      .json({
-        message: "Sessão agendada com sucesso.",
-        appointment: newAppointment,
-      });
+    const newAppointment = await Appointment.findByPk(createdAppointment.id, {
+      include: [
+        {
+          model: User,
+          attributes: ["id", "name", "email", "role"],
+        },
+        {
+          model: Patient,
+          attributes: ["id", "name", "email", "cpf", "phone"],
+        },
+      ],
+      order: [["scheduled_time", "ASC"]],
+    });
+
+    return res.status(201).json(newAppointment);
   } catch (error) {
     winston.error("Erro ao agendar sessão:", error);
     return res.status(500).json({ message: "Erro interno do servidor." });
@@ -102,13 +109,15 @@ exports.deleteAppointment = async (req, res) => {
     const userRole = req.user.role;
 
     if (
-      userRole === "therapist" && appointment.therapist_id !== userId ||
-      userRole === "patient" && appointment.patient_id !== patient.id
+      (userRole === "therapist" && appointment.therapist_id !== userId) ||
+      (userRole === "patient" && appointment.patient_id !== patient.id)
     ) {
-      return res.status(403).json({ message: "Acesso negado para deletar essa consulta." });
+      return res
+        .status(403)
+        .json({ message: "Acesso negado para deletar essa consulta." });
     }
 
-    winston.info("[" + appointment.id + "] consulta destruída")
+    winston.info("[" + appointment.id + "] consulta destruída");
     await appointment.destroy();
 
     return res.status(200).json({ message: "Consulta deletada com sucesso." });
@@ -118,13 +127,10 @@ exports.deleteAppointment = async (req, res) => {
   }
 };
 
-
 exports.getAllByUser = async (req, res) => {
 
-  console.log("req.user: " + JSON.stringify(req.user));
-  
-
-  const id = req.user.perfilInfo.id;
+  const id = await req.user.perfilInfo.id;
+  const role = await req.user.role;
 
   try {
     let whereClause;
@@ -132,8 +138,7 @@ exports.getAllByUser = async (req, res) => {
     if (role === "therapist") {
       whereClause = { therapist_id: id };
     } else {
-      const patient = await getPatientByUser(id);
-      whereClause = { patient_id: patient.id };
+      whereClause = { patient_id: id };
     }
 
     const sessions = await Appointment.findAll({
@@ -158,7 +163,7 @@ exports.getAllByUser = async (req, res) => {
   }
 };
 
-async function getPatientByUser(id){
+async function getPatientByUser(id) {
   const patient = await Patient.findOne({ where: { user_id: id } });
 
   if (!patient) {
