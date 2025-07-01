@@ -1,5 +1,4 @@
-import AppointmentForm from '@/components/blocks/appointment/AppointmentForm';
-import AppointmentList from '@/components/blocks/appointment/AppointmentList';
+import AppointmentClientWrapper from '@/components/blocks/appointment/AppointmentClientWrapper';
 import { apiServer } from '@/lib/api-server';
 
 export default async function Agendamento() {
@@ -18,10 +17,7 @@ export default async function Agendamento() {
             Gerencie suas sessões de psicoterapia
           </p>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <AppointmentForm terapeutas={terapeutas} />
-          <AppointmentList agendamentos={agendamentos} />
-        </div>
+        <AppointmentClientWrapper terapeutas={terapeutas} agendamentos={agendamentos} />
       </div>
     </div>
   );
