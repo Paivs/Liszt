@@ -9,6 +9,10 @@ export async function getAllAppointments(){
   return await api.get("appointment")
 }
 
+export async function getAllAppointmentsByUser(){
+  return await api.get("appointment")
+}
+
 export async function deleteAppointment(id){
   return await api.del(`appointment/${id}`)
 }
