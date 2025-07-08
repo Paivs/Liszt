@@ -17,7 +17,7 @@ import {
 import { TabsContent } from "@/components/ui/tabs";
 import { Heart, Moon, Plus, Trash2, Star, Cloud } from "lucide-react";
 import { toast } from "sonner";
-import { createDreamJournal, fetchDreams } from "@/lib/journal";
+import { createDreamJournal, fetchDreams } from "@/lib/DreamJournal";
 
 export default function Dreams() {
   const [sonhos, setSonhos] = useState([]);

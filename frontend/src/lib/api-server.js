@@ -1,11 +1,10 @@
-// lib/api-server.js
+//@/lib/api-server.js
 import { cookies } from "next/headers";
+import { UnauthorizedError } from "./errors";
 
-// Função genérica para requisições no lado do servidor
 async function apiFetchServer(path, options = {}) {
-  const cookiesStore = await cookies();
+  const cookiesStore = await cookies(); 
   const token = cookiesStore.get("token")?.value;
-
 
   const headers = {
     "Content-Type": "application/json",
@@ -13,23 +12,30 @@ async function apiFetchServer(path, options = {}) {
     ...options.headers,
   };
 
-  
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/${path}`, {
     ...options,
     headers,
-    cache: "no-store", // ou force-cache se quiser cachear
+    cache: "no-store",
   });
-  
-  
+
+  if (res.status === 401 || res.status === 403) {
+    throw new UnauthorizedError();
+  }
+
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Erro na requisição do servidor.");
+    let errorMessage = "Erro na requisição do servidor.";
+    try {
+      const err = await res.json();
+      if (err?.message) errorMessage = err.message;
+    } catch {
+      // fallback
+    }
+    throw new Error(errorMessage);
   }
 
   return res.json();
 }
 
-// Atalhos para métodos comuns
 export const apiServer = {
   get: (path) => apiFetchServer(path),
   post: (path, body) =>

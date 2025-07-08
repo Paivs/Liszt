@@ -1,10 +1,26 @@
-import AppointmentClientWrapper from '@/components/blocks/appointment/AppointmentClientWrapper';
-import { apiServer } from '@/lib/api-server';
+import AppointmentClientWrapper from "@/components/blocks/appointment/AppointmentClientWrapper";
+import { apiServer } from "@/lib/api-server";
+import { UnauthorizedError } from "@/lib/errors";
+import { redirect } from "next/navigation";
 
 export default async function Agendamento() {
-  // Busca SSR dos dados
-  const terapeutas = await apiServer.get('user/therapist');
-  const agendamentos = await apiServer.get('appointment');
+  let terapeutas = [];
+  let agendamentos = [];
+
+  try {
+    const [terapeutasRes, agendamentosRes] = await Promise.all([
+      apiServer.get("user/therapist"),
+      apiServer.get("appointment"),
+    ]);
+
+    terapeutas = terapeutasRes || [];
+    console.log(terapeutasRes)
+    agendamentos = agendamentosRes || [];
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      redirect("/login");
+    }
+  }
 
   return (
     <div className="min-h-screen pt-20 p-6">
@@ -17,7 +33,10 @@ export default async function Agendamento() {
             Gerencie suas sessões de psicoterapia
           </p>
         </div>
-        <AppointmentClientWrapper terapeutas={terapeutas} agendamentos={agendamentos} />
+        <AppointmentClientWrapper
+          terapeutas={terapeutas}
+          agendamentos={agendamentos}
+        />
       </div>
     </div>
   );

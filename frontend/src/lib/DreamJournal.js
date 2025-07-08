@@ -20,6 +20,11 @@ export async function createDreamJournal(
   });
 }
 
-export async function fetchDreams(){
+export async function getAllJournals(){
   return await api.get("journal/dream")
+}
+
+
+export async function deleteJournal(params) {
+  
 }

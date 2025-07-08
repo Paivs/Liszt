@@ -24,8 +24,8 @@ const EmotionJournal = sequelize.define('EmotionJournal', {
   mood: {
     type: DataTypes.STRING,
   },
-  title: {
-    type: DataTypes.STRING,
+  intensity: {
+    type: DataTypes.INTEGER,
   },
   description: {
     type: DataTypes.TEXT,
