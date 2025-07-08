@@ -1,11 +1,9 @@
-const { User } = require("../models");
+const { User, Patient } = require("../models");
 const winston = require("../logs/logger");
 const bcrypt = require("bcryptjs");
 
 
 exports.updatePassword = async (req, res) => {
-  console.log("cheiguei");
-  
   try {
     const { last_password, new_password } = req.body;
     const userId = req.user.id;
@@ -31,6 +29,62 @@ exports.updatePassword = async (req, res) => {
   } catch (error) {
     winston.error("Erro ao atualizar senha:", error);
     res.status(500).json({ message: "Erro interno ao atualizar a senha." });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, email } = req.body;
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado." });
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+
+    await user.save();
+
+    return res.status(200).json({ message: "Perfil atualizado com sucesso." });
+  } catch (error) {
+    winston.error("Erro ao atualizar perfil:", error);
+    return res.status(500).json({ message: "Erro interno ao atualizar perfil." });
+  }
+};
+
+exports.updatePatientData = async (req, res) => {
+  try {
+    const id = req.user.perfilInfo.id;
+
+    const {
+      cpf,
+      phone,
+      emergency_contact_name,
+      emergency_contact_phone,
+      address,
+    } = req.body;
+
+    const patient = await Patient.findByPk(id);
+
+    if (!patient) {
+      return res.status(404).json({ message: "Paciente não encontrado." });
+    }
+
+    patient.cpf = cpf;
+    patient.phone = phone;
+    patient.emergency_contact_name = emergency_contact_name;
+    patient.emergency_contact_phone = emergency_contact_phone;
+    patient.address = address;
+
+    await patient.save();
+
+    return res.status(200).json({ message: "Dados do paciente atualizados com sucesso." });
+  } catch (error) {
+    winston.error("Erro ao atualizar dados do paciente:", error);
+    return res.status(500).json({ message: "Erro interno ao atualizar dados do paciente." });
   }
 };
 
