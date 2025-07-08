@@ -1,47 +1,54 @@
-//@/hooks/usePatientEmotionJournal.js
+import { api } from "@/lib/api";
 import { useState, useCallback } from "react";
-import { createJournal as apiCreate, getAllJournals, deleteJournal as apiDelete } from "@/lib/EmotionJournal";
 
 export default function usePatientJournal(initialJournal = []) {
   const [journal, setJournal] = useState(initialJournal);
 
-  // Adiciona um novo agendamento ao estado local
-  const addJournal = useCallback((novo) => {
-    setJournal((prev) => [...prev, novo]);
-  }, []);
-
-  // Remove um agendamento do estado local
-  const removeJournal = useCallback((id) => {
-    setJournal((prev) => prev.filter((ag) => ag.id !== id));
-  }, []);
-
-  // Busca todos os journal do backend e atualiza o estado
   const fetchJournals = useCallback(async () => {
-    const data = await getAllJournals();
-    setJournal(data || []);
-    return data;
+    try {
+      const data = await api.get("journal/emotion");
+      setJournal(data || []);
+      return data;
+    } catch (err) {
+      console.error(err);
+      setJournal([]);
+    }
   }, []);
 
-  // Cria um novo agendamento via API e atualiza o estado
-  const create = useCallback(async (date, mood, intensity, emotion_trigger, description) => {
-    const novo = await apiCreate(date, mood, intensity, emotion_trigger, description);
-    setJournal((prev) => [...prev, novo.emotion]);
-    return novo;
-  }, []);
+  const createJournal = useCallback(
+    async (date, mood, intensity, emotion_trigger, description) => {
+      try {
+        const novo = await api.post("journal/emotion", {
+          date,
+          mood,
+          intensity,
+          emotion_trigger,
+          description,
+        });
 
-  // Remove um agendamento via API e atualiza o estado
-  const remove = useCallback(async (id) => {
-    await apiDelete(id);
-    setJournal((prev) => prev.filter((ag) => ag.id !== id));
+        setJournal((prev) => [...prev, novo.emotion]);
+        return novo;
+      } catch (err) {
+        throw err;
+      }
+    },
+    []
+  );
+
+  const deleteJournal = useCallback(async (id) => {
+    try {
+      await api.del(`journal/emotion/${id}`);
+      setJournal((prev) => prev.filter((j) => j.id !== id));
+    } catch (err) {
+      throw err;
+    }
   }, []);
 
   return {
     journal,
     setJournal,
-    addJournal,
-    removeJournal,
     fetchJournals,
-    createJournal: create,
-    deleteJournal: remove,
+    createJournal,
+    deleteJournal,
   };
-} 
+}

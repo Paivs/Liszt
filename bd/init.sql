@@ -46,7 +46,7 @@ CREATE TABLE dream_journal (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     patient_id UUID REFERENCES patient(id) ON DELETE CASCADE, -- Referência ao paciente
     date TIMESTAMP NOT NULL,
-    type_appointment VARCHAR(100), -- pesadelo, lucido, recorrente, profético, comum, simbólico
+    category VARCHAR(100), -- pesadelo, lucido, recorrente, profético, comum, simbólico
     clarity VARCHAR(100), -- muito vago, vago, moderado, claro, muito claro
     title VARCHAR(255),
     dream_description TEXT,  -- Descrição do sonho

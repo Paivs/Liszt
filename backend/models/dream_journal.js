@@ -1,4 +1,3 @@
-// models/dream_journal.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const Patient = require('./patient');
@@ -26,6 +25,22 @@ const DreamJournal = sequelize.define('DreamJournal', {
   },
   dream_description: {
     type: DataTypes.TEXT,
+  },
+  category: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+  },
+  clarity: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+  },
+  emotions_list: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  symbols_list: {
+    type: DataTypes.TEXT,
+    allowNull: true,
   },
 }, {
   timestamps: true,

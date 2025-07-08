@@ -10,6 +10,9 @@ import { TabsContent } from "@/components/ui/tabs";
 import { Heart, Plus, Trash2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import usePatientJournal from "@/hooks/usePatientEmotionJournal";
+import { z } from "zod";
+import { emotionSchema } from "@/lib/schemas/emotionSchema";
+import { useEmotionStore } from "@/stores/emotionStore";
 
 export default function Emotions({ initialEmotions = [] }) {
   const {
@@ -19,13 +22,7 @@ export default function Emotions({ initialEmotions = [] }) {
     deleteJournal,
   } = usePatientJournal(initialEmotions);
 
-  const [novaEmocao, setNovaEmocao] = useState({
-    date: new Date().toISOString().split("T")[0],
-    mood: "",
-    intensity: [5],
-    description: "",
-    emotion_trigger: "",
-  });
+  const { novaEmocao, setNovaEmocao, resetEmocao } = useEmotionStore();
 
   useEffect(() => {
     fetchJournals();
@@ -60,10 +57,17 @@ export default function Emotions({ initialEmotions = [] }) {
   const handleEmocaoSubmit = async (e) => {
     e.preventDefault();
 
-    if (!novaEmocao.mood || !novaEmocao.description) {
-      toast.error("Erro", {
-        description: "Preencha emoção e descrição.",
-        variant: "destructive",
+    try {
+      emotionSchema.parse(novaEmocao);
+    } catch (validationError) {
+      const errors = validationError.errors.map((err) => `• ${err.message}`);
+      toast.error("Erro de validação", {
+        description: (
+          <div className="whitespace-pre-line text-left">
+            {errors.join("\n")}
+          </div>
+        ),
+        duration: 6000,
       });
       return;
     }
@@ -78,14 +82,7 @@ export default function Emotions({ initialEmotions = [] }) {
       );
 
       toast.success("Sucesso!", { description: "Emoção registrada!" });
-
-      setNovaEmocao({
-        date: new Date().toISOString().split("T")[0],
-        mood: "",
-        intensity: [5],
-        description: "",
-        emotion_trigger: "",
-      });
+      resetEmocao();
     } catch (err) {
       toast.error("Erro ao registrar", {
         description: err.message,
