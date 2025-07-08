@@ -24,8 +24,16 @@ export function usePatientSettings({ schema, endpoint, onSuccess }) {
       if (onSuccess) onSuccess(response);
     } catch (error) {
       if (error instanceof ZodError) {
-        error.errors.forEach((err) => {
-          toast.error(err.message);
+        const mensagens = error.errors
+          .map((err) => `• ${err.message}`)
+          .join("\n");
+
+        toast.error("Erro na validação", {
+          description: (
+            <div className="whitespace-pre-line text-left">{mensagens}</div>
+          ),
+          variant: "destructive",
+          duration: 7000,
         });
       } else {
         toast.error("Erro ao salvar dados.");

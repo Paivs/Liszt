@@ -16,6 +16,7 @@ export const patientDataSchema = z.object({
 
 export const passwordSchema = z
   .object({
+    last_password: z.string().min(3, "Senha atual é obrigatória"),
     new_password: z.string().min(6, "A nova senha deve ter pelo menos 6 caracteres."),
     confirm_password: z.string().min(6, "Confirmação obrigatória."),
   })

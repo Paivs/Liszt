@@ -8,6 +8,7 @@ import { passwordSchema } from "@/schemas/patientSettingsSchema";
 
 export default function SecurityForm() {
   const [form, setForm] = useState({
+    last_password: "",
     new_password: "",
     confirm_password: "",
   });
@@ -28,6 +29,14 @@ export default function SecurityForm() {
       </h2>
 
       <div className="space-y-4">
+        <InputField
+          label="Senha atual"
+          name="last_password"
+          type="password"
+          value={form.last_password}
+          onChange={onChange}
+        />
+        <br/>
         <InputField
           label="Nova Senha"
           name="new_password"
