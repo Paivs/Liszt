@@ -18,7 +18,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import { Moon, Plus, Trash2, Star, Cloud } from "lucide-react";
 import { toast } from "sonner";
 import usePatientJournal from "@/hooks/usePatientDreamJournal";
-import { dreamSchema } from "@/lib/schemas/dreamSchema";
+import { dreamSchema } from "@/schemas/dreamSchema";
 import { useDreamStore } from "@/stores/dreamStore";
 
 export default function Dreams() {
