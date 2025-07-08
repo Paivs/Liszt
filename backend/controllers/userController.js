@@ -1,5 +1,38 @@
-const { User, Patient } = require("../models");
+const { User } = require("../models");
 const winston = require("../logs/logger");
+const bcrypt = require("bcryptjs");
+
+
+exports.updatePassword = async (req, res) => {
+  console.log("cheiguei");
+  
+  try {
+    const { last_password, new_password } = req.body;
+    const userId = req.user.id;
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado." });
+    }
+
+    const isMatch = await bcrypt.compare(last_password, user.password_hash);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Senha atual incorreta." });
+    }
+
+    const newHash = await bcrypt.hash(new_password, 10);
+    user.password_hash = newHash;
+
+    await user.save();
+
+    res.status(200).json({ message: "Senha alterada com sucesso." });
+  } catch (error) {
+    winston.error("Erro ao atualizar senha:", error);
+    res.status(500).json({ message: "Erro interno ao atualizar a senha." });
+  }
+};
 
 exports.listAllTherapist = async (req, res) => {
   try {
