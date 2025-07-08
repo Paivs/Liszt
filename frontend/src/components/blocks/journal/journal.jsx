@@ -10,9 +10,6 @@ import Dreams from "../../../components/blocks/journal/dream/dreams";
 export default function Journal({initialEmotions, initialDreams}) {
   const [activeTab, setActiveTab] = useState("emocoes");
   
-  console.log(initialEmotions);
-  console.log(initialDreams);
-
   return (
     <div className="min-h-screen pt-20 p-6">
       <div className="max-w-7xl mx-auto">

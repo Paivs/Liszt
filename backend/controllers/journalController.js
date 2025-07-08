@@ -4,28 +4,21 @@ const winston = require("../logs/logger");
 exports.createDream = async (req, res) => {
   const {
     date,
-    type_appointment,
-    clarity,
+    category,
     title,
     dream_description,
     emotions_list,
     symbols_list,
+    clarity,
   } = req.body;
 
-  const user_id = req.user.id;
+  const patient_id = req.user.perfilInfo.id;
 
-  // Busca paciente pelo user_id
-  const patient = await Patient.findOne({ where: { user_id } });
-
-  if (!patient) {
-    return res.status(400).json({ message: "Usuário não é paciente" });
-  }
-
-  const patient_id = patient.id;
+  console.log(req.body)
 
   if (
     !date ||
-    !type_appointment ||
+    !category ||
     !clarity ||
     !title ||
     !dream_description ||
@@ -42,17 +35,17 @@ exports.createDream = async (req, res) => {
     const newDream = await DreamJournal.create({
       patient_id,
       date,
-      type_appointment,
-      clarity,
+      category,
       title,
       dream_description,
       emotions_list,
       symbols_list,
+      clarity,
     });
 
     return res.status(201).json({
       message: "Sonho anotado com sucesso.",
-      dream: newDream,
+      newDream: newDream,
     });
   } catch (error) {
     winston.error("Erro ao criar diário de sonhos:", error);
@@ -109,7 +102,6 @@ exports.deleteDream = async (req, res) => {
     return res.status(500).json({ message: "Erro interno ao deletar sonho." });
   }
 };
-
 
 exports.createEmotion = async (req, res) => {
   const { date, mood, intensity, emotion_trigger, description } = req.body;

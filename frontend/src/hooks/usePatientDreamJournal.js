@@ -1,47 +1,51 @@
-//@/hooks/usePatientDreamJournal.js
 import { useState, useCallback } from "react";
-import { createDreamJournal as apiCreate, getAllJournals, deleteJournal as apiDelete } from "@/lib/DreamJournal";
+import { api } from "@/lib/api";
 
 export default function usePatientJournal(initialJournal = []) {
   const [journal, setJournal] = useState(initialJournal);
 
-  // Adiciona um novo agendamento ao estado local
-  const addJournal = useCallback((novo) => {
-    setJournal((prev) => [...prev, novo]);
-  }, []);
-
-  // Remove um agendamento do estado local
-  const removeJournal = useCallback((id) => {
-    setJournal((prev) => prev.filter((ag) => ag.id !== id));
-  }, []);
-
-  // Busca todos os journal do backend e atualiza o estado
   const fetchJournals = useCallback(async () => {
-    const data = await getAllJournals();
+    const data = await api.get("journal/dream");
     setJournal(data || []);
     return data;
   }, []);
 
-  // Cria um novo agendamento via API e atualiza o estado
-  const create = useCallback(async (therapist_id, scheduled_time, type_appointment, obs) => {
-    const novo = await apiCreate(therapist_id, scheduled_time, type_appointment, obs);
-    setJournal((prev) => [...prev, novo]);
-    return novo;
+  const createJournal = useCallback(async (
+    date,
+    category,
+    title,
+    dream_description,
+    emotions_list,
+    symbols_list,
+    clarity
+  ) => {
+    const res = await api.post("journal/dream", {
+      date,
+      category,
+      title,
+      dream_description,
+      emotions_list,
+      symbols_list,
+      clarity,
+    });
+
+    if (res?.dream) {
+      setJournal((prev) => [...prev, res.dream]);
+    }
+
+    return res;
   }, []);
 
-  // Remove um agendamento via API e atualiza o estado
-  const remove = useCallback(async (id) => {
-    await apiDelete(id);
-    setJournal((prev) => prev.filter((ag) => ag.id !== id));
+  const deleteJournal = useCallback(async (id) => {
+    await api.del(`journal/dream/${id}`);
+    setJournal((prev) => prev.filter((j) => j.id !== id));
   }, []);
 
   return {
     journal,
     setJournal,
-    addJournal,
-    removeJournal,
     fetchJournals,
-    createJournal: create,
-    deleteJournal: remove,
+    createJournal,
+    deleteJournal,
   };
-} 
+}
