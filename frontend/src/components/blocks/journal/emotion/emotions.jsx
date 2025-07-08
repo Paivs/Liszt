@@ -11,7 +11,7 @@ import { Heart, Plus, Trash2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import usePatientJournal from "@/hooks/usePatientEmotionJournal";
 import { z } from "zod";
-import { emotionSchema } from "@/lib/schemas/emotionSchema";
+import { emotionSchema } from "@/schemas/emotionSchema";
 import { useEmotionStore } from "@/stores/emotionStore";
 
 export default function Emotions({ initialEmotions = [] }) {
