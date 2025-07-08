@@ -5,7 +5,7 @@ module.exports = async (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
   if (!token) {
-    return res.status(401).json({ message: 'Acesso não autorizado' });
+    return res.status(403).json({ message: 'Acesso não autorizado' });
   }
 
   try {
@@ -21,7 +21,6 @@ module.exports = async (req, res, next) => {
     let perfilInfo = null;
 
     if (usuario.role === 'patient') {
-      console.log(usuario.id)
       perfilInfo = await Patient.findOne({ where: { user_id: usuario.id } });
     } else if (usuario.role === 'therapist') {
       // perfilInfo = await Professor.findOne({ where: { usuario_id: usuario.id } });

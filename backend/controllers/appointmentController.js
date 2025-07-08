@@ -163,6 +163,42 @@ exports.getAllByUser = async (req, res) => {
   }
 };
 
+exports.getAllByTherapist = async (req, res) => {
+
+  const id = await req.user.perfilInfo.id;
+  const role = await req.user.role;
+
+  try {
+    let whereClause;
+
+    if (role === "therapist") {
+      whereClause = { therapist_id: id };
+    } else {
+      whereClause = { patient_id: id };
+    }
+
+    const sessions = await Appointment.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: User,
+          attributes: ["id", "name", "email", "role"],
+        },
+        {
+          model: Patient,
+          attributes: ["id", "name", "email", "cpf", "phone"],
+        },
+      ],
+      order: [["scheduled_time", "ASC"]],
+    });
+
+    res.status(200).json(sessions);
+  } catch (error) {
+    winston.error("Erro ao buscar sessões do usuário:", error);
+    res.status(500).json({ message: "Erro interno ao buscar sessões." });
+  }
+};
+
 async function getPatientByUser(id) {
   const patient = await Patient.findOne({ where: { user_id: id } });
 

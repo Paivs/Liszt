@@ -36,7 +36,6 @@ CREATE TABLE emotion_journal (
     mood VARCHAR(50),  -- Emoção registrada (ex: feliz, triste, ansioso)
     intensity int, -- de 0 a 10
     emotion_trigger VARCHAR(255),
-    title VARCHAR(255),
     description TEXT,  -- Descrição adicional sobre o que aconteceu
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
