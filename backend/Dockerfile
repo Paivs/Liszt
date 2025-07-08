@@ -14,7 +14,7 @@ RUN npm install --omit=dev
 COPY . .
 
 # Etapa 5 — Expõe a porta (ajuste se necessário)
-EXPOSE 8085
+EXPOSE 8090
 
 # Etapa 6 — Comando para rodar o servidor
 CMD ["npm", "start"]
