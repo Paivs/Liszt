@@ -37,8 +37,7 @@ CREATE TABLE therapist (
     last_login TIMESTAMP, -- Último login na plataforma.
     deactivated_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de criação
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de atualização
-    CONSTRAINT therapist_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Data de atualização
 );
 
 CREATE TABLE admin (
@@ -50,8 +49,7 @@ CREATE TABLE admin (
     last_login TIMESTAMP, -- Último login
     active BOOLEAN DEFAULT TRUE, -- Status de ativação
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT admin_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -67,8 +65,7 @@ CREATE TABLE patient (
     emergency_contact_phone VARCHAR(20), -- Telefone do contato de emergência
     address TEXT, -- Endereço completo
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de criação
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de atualização
-    CONSTRAINT patient_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Data de atualização
 );
 
 -- Tabela de diário de emoções
@@ -113,7 +110,7 @@ CREATE TABLE appointment (
 );
 
 -- Índices para otimizar as consultas
-CREATE INDEX idx_sessions_patient_id ON sessions(patient_id);
+CREATE INDEX idx_appointment_patient_id ON appointment(patient_id);
 CREATE INDEX idx_emotion_journal_patient_id ON emotion_journal(patient_id);
 CREATE INDEX idx_dream_journal_patient_id ON dream_journal(patient_id);
 
@@ -125,3 +122,12 @@ CREATE TABLE activity_logs (
     description text NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL
 );
+
+ALTER TABLE therapist
+  ADD CONSTRAINT therapist_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE admin
+  ADD CONSTRAINT admin_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE patient
+  ADD CONSTRAINT patient_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
