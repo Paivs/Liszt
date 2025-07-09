@@ -17,12 +17,11 @@ const logoWidth = 150;
 const logoHeight = 40;
 
 const menuItems = [
-  { label: "Dashboard", href: "/admin/dashboard" },
-  { label: "Pacientes", href: "/admin/patients" },
-  { label: "Terapeutas", href: "/admin/therapists" },
-  { label: "Diários", href: "/admin/journal" },
-  { label: "Sessões", href: "/admin/appointment" },
-  { label: "Configurações", href: "/admin/settings" },
+  { label: "Dashboard", href: "/therapist/dashboard" },
+  { label: "Pacientes", href: "/therapist/patients" },
+  { label: "Diários", href: "/therapist/journal" },
+  { label: "Sessões", href: "/therapist/appointment" },
+  { label: "Configurações", href: "/therapist/settings" },
 ];
 
 const loginLink = "/login";
@@ -46,7 +45,7 @@ export default function Header() {
     <header className="relative bg-[#004B50] dark:bg-background text-foreground border-b border-border shadow-sm w-full z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/admin/dashboard" className="flex items-center gap-2">
+        <Link href="/therapist/dashboard" className="flex items-center gap-2">
           <Image
             src={logoSrc}
             alt={logoAlt}

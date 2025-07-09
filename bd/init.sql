@@ -7,10 +7,53 @@ CREATE TABLE users (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(50) CHECK(role IN ('therapist', 'patient')) NOT NULL, -- 'therapist' ou 'patient'
+    role VARCHAR(50) CHECK(role IN ('therapist', 'patient', 'admin')) NOT NULL, -- 'therapist' ou 'patient'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Tabela de terapeutas (com dados específicos)
+CREATE TABLE therapist (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE, -- Referência ao usuário (therapist)
+    name VARCHAR(255) NOT NULL, -- Nome completo do terapeuta
+    cpf VARCHAR(20) UNIQUE, -- CPF (se pessoa física)
+    email VARCHAR(255) UNIQUE, -- Email do terapeuta
+    phone VARCHAR(20), -- Telefone de contato
+    address TEXT, -- Endereço completo
+    
+    accepts_local BOOLEAN,
+    available_days TEXT[], -- ex: ["Seg", "Qua", "Sex"]
+    price NUMERIC(10,2),
+
+    profile_picture TEXT, 
+    bio TEXT, 
+    verified BOOLEAN DEFAULT FALSE, -- Se o terapeuta foi verificado/admin aprovado.
+    visibility BOOLEAN DEFAULT TRUE, -- Se o terapeuta está visível na plataforma.
+    crp VARCHAR(20),
+    specialties TEXT[],
+    approach TEXT,
+    
+    last_login TIMESTAMP, -- Último login na plataforma.
+    deactivated_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de criação
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de atualização
+    CONSTRAINT therapist_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE admin (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE, -- Referência ao usuário base
+    role VARCHAR(50) DEFAULT 'admin', -- Papel do admin (admin, superadmin, etc.)
+    email VARCHAR(255) UNIQUE, -- Email de contato
+    phone VARCHAR(20), -- Telefone
+    last_login TIMESTAMP, -- Último login
+    active BOOLEAN DEFAULT TRUE, -- Status de ativação
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT admin_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 
 -- Tabela de pacientes (com dados específicos)
 CREATE TABLE patient (

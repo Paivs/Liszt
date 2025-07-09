@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
 
-const protectedPrefixes = ["/admin", "/patient"];
+const protectedPrefixes = ["/therapist", "/patient", "/admin"];
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("token")?.value;
   const perfil = request.cookies.get("perfil")?.value;
-
-  console.log("perfil: " + perfil);
-  
 
   const isProtected = protectedPrefixes.some(
     (prefix) => pathname === prefix || pathname.startsWith(prefix + "/")
@@ -21,7 +18,12 @@ export function middleware(request) {
       return NextResponse.redirect(loginUrl);
     }
 
-    if (pathname.startsWith("/admin") && perfil !== "therapist") {
+    if (pathname.startsWith("/admin") && perfil !== "admin") {
+      const unauthorizedUrl = new URL("/unauthorized", request.url);
+      return NextResponse.redirect(unauthorizedUrl);
+    }
+
+    if (pathname.startsWith("/therapist") && perfil !== "therapist") {
       const unauthorizedUrl = new URL("/unauthorized", request.url);
       return NextResponse.redirect(unauthorizedUrl);
     }
@@ -36,5 +38,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/patient/:path*"],
+  matcher: ["/therapist/:path*", "/patient/:path*", "/admin/:path*"],
 };

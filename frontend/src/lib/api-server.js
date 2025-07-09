@@ -26,6 +26,8 @@ async function apiFetchServer(path, options = {}) {
     let errorMessage = "Erro na requisição do servidor.";
     try {
       const err = await res.json();
+      console.log(err);
+      
       if (err?.message) errorMessage = err.message;
     } catch {
       // fallback

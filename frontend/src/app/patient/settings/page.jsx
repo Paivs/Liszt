@@ -6,7 +6,7 @@ import SecurityForm from "@/components/blocks/settings/SecurityForm";
 
 export default async function SettingsPage() {
   let user = { name: "", email: "" };
-  let patientUser = {
+  let profile = {
     name: "",
     cpf: "",
     phone: "",
@@ -25,14 +25,14 @@ export default async function SettingsPage() {
       };
     }
 
-    if (data.patientUser) {
-      patientUser = {
-        name: data.patientUser.name,
-        cpf: data.patientUser.cpf,
-        phone: data.patientUser.phone,
-        emergency_contact_name: data.patientUser.emergency_contact_name,
-        emergency_contact_phone: data.patientUser.emergency_contact_phone,
-        address: data.patientUser.address,
+    if (data.profile) {
+      profile = {
+        name: data.profile.name,
+        cpf: data.profile.cpf,
+        phone: data.profile.phone,
+        emergency_contact_name: data.profile.emergency_contact_name,
+        emergency_contact_phone: data.profile.emergency_contact_phone,
+        address: data.profile.address,
       };
     }
   } catch (err) {
@@ -46,7 +46,7 @@ export default async function SettingsPage() {
       </h1>
       
       <PatientProfileForm initialData={user} />
-      <PatientDataForm initialData={patientUser} />
+      <PatientDataForm initialData={profile} />
       <SecurityForm />
     </section>
   );

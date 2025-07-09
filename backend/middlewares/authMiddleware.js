@@ -23,8 +23,14 @@ module.exports = async (req, res, next) => {
     if (usuario.role === 'patient') {
       perfilInfo = await Patient.findOne({ where: { user_id: usuario.id } });
     } else if (usuario.role === 'therapist') {
-      // perfilInfo = await Professor.findOne({ where: { usuario_id: usuario.id } });
+      // perfilInfo = await Therapist.findOne({ where: { usuario_id: usuario.id } });
       perfilInfo = {  }
+    } else if (usuario.role === 'admin') {
+      // perfilInfo = await Admin.findOne({ where: { usuario_id: usuario.id } });
+      perfilInfo = {  }
+
+    }else{
+      throw new Error("Erro interno ao validar o usuário")
     }
 
     req.user = {

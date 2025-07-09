@@ -7,10 +7,16 @@ const Patient = require('./patient');
 const EmotionJournal = require('./emotion_journal');
 const DreamJournal = require('./dream_journal');
 const Appointment = require('./appointment');
+const Therapist = require('./therapist');
+const Admin = require('./admin');
 
 // Definir relações entre os modelos
 User.hasOne(Patient, { foreignKey: 'user_id' });
 Patient.belongsTo(User, { foreignKey: 'user_id' });
+
+Therapist.belongsTo(User, { foreignKey: 'user_id' });
+
+Admin.belongsTo(User, { foreignKey: 'user_id' });
 
 Patient.hasMany(EmotionJournal, { foreignKey: 'patient_id' });
 EmotionJournal.belongsTo(Patient, { foreignKey: 'patient_id' });
@@ -29,4 +35,4 @@ sequelize.sync({ force: false }).then(() => {
   console.log('Banco de dados sincronizado!');
 });
 
-module.exports = { User, Patient, EmotionJournal, DreamJournal, Appointment };
+module.exports = { User, Patient, EmotionJournal, DreamJournal, Appointment, Therapist, Admin };

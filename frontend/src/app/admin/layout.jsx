@@ -1,13 +1,18 @@
-import { Geist, Geist_Mono } from "next/font/google";
+
 import Navbar from "@/components/blocks/navbar/admin";
 import FooterSimple from "@/components/blocks/footers/simple";
+
+export const metadata = {
+  title: "Liszt",
+  description: "Gerenciador de sessões para psicoterapeutas",
+};
 
 export default function RootLayout({ children }) {
   return (
     <>
-        <Navbar/>
-        {children}
-        <FooterSimple/>
+      <Navbar />
+      {children}
+      <FooterSimple />
     </>
   );
 }
