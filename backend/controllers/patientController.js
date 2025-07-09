@@ -83,5 +83,41 @@ exports.deletePatientAndUser = async (req, res) => {
   }
 };
 
+exports.updatePatient = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      cpf,
+      email,
+      phone,
+      emergency_contact_name,
+      emergency_contact_phone,
+      address,
+    } = req.body;
+
+    const patient = await Patient.findByPk(id);
+    if (!patient) {
+      return res.status(404).json({ message: "Paciente não encontrado" });
+    }
+
+    await patient.update({
+      name,
+      cpf,
+      email,
+      phone,
+      emergency_contact_name,
+      emergency_contact_phone,
+      address,
+    });
+
+    res.status(200).json({ patient });
+  } catch (error) {
+    winston.error("Erro ao atualizar paciente:", error);
+    res.status(500).json({ message: "Erro interno ao atualizar paciente." });
+  }
+};
+
+
 
 
