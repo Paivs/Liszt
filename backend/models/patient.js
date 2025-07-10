@@ -2,6 +2,9 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const User = require('./user');
+const sequelizePaginate = require("sequelize-paginate");
+
+
 
 const Patient = sequelize.define('Patient', {
   id: {
@@ -43,11 +46,13 @@ const Patient = sequelize.define('Patient', {
     type: DataTypes.TEXT,
   },
 }, {
+  tableName: 'patient',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
 });
 
+sequelizePaginate.paginate(Patient);
 Patient.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = Patient;

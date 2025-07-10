@@ -20,9 +20,7 @@ const menuItems = [
   { label: "Dashboard", href: "/admin/dashboard" },
   { label: "Pacientes", href: "/admin/patients" },
   { label: "Terapeutas", href: "/admin/therapists" },
-  { label: "Diários", href: "/admin/journal" },
   { label: "Sessões", href: "/admin/appointment" },
-  { label: "Configurações", href: "/admin/settings" },
 ];
 
 const loginLink = "/login";

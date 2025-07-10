@@ -15,6 +15,39 @@ exports.listAllPatients = async (req, res) => {
   }
 };
 
+exports.listPaginated = async (req, res) => {
+  const { page = 1, limit = 10, search = "" } = req.query;
+
+  try {
+    const options = {
+      page: parseInt(page),
+      paginate: parseInt(limit),
+      where: search
+        ? {
+            name: {
+              [Op.iLike]: `%${search}%`,
+            },
+          }
+        : {},
+      order: [["created_at", "DESC"]],
+    };
+
+    const { docs, pages, total } = await Patient.paginate(options);
+
+    res.json({
+      data: docs,
+      meta: {
+        total,
+        pages,
+        currentPage: page,
+      },
+    });
+  } catch (error) {
+    console.error("Erro na paginação:", error);
+    res.status(500).json({ message: "Erro ao listar pacientes com paginação." });
+  }
+};
+
 exports.createPatient = async (req, res) => {
   try {
     const {

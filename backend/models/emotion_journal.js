@@ -31,6 +31,7 @@ const EmotionJournal = sequelize.define('EmotionJournal', {
     type: DataTypes.TEXT,
   },
 }, {
+  tableName: 'emotion_journal',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',

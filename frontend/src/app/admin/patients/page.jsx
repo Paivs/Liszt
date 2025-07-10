@@ -1,10 +1,10 @@
-// app/admin/patient/page.jsx
+// /admin/patient/page.jsx
 import PatientAdminClient from "@/components/blocks/admin/patients/PatientAdminClient";
 import { apiServer } from "@/lib/api-server";
 
-export default async function patientAdminPage() {
-  const patient = await apiServer.get("patient");
-  console.log(patient);
+export default async function patientAdminPage({ searchParams }) {
+  const page = Number(searchParams.page) || 1;
+  const { data, meta } = await apiServer.get(`patient/paginate?page=${page}`);
 
   return (
     <>
@@ -14,7 +14,7 @@ export default async function patientAdminPage() {
           Gerencie os pacientes cadastrados na plataforma
         </p>
       </div>
-      <PatientAdminClient initialData={patient} />
+      <PatientAdminClient initialData={data} meta={meta} />
     </>
   );
 }

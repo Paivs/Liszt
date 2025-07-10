@@ -93,6 +93,47 @@ exports.getAll = async (req, res) => {
   }
 };
 
+exports.listPaginated = async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
+
+  try {
+    const options = {
+      page: Number(page),
+      paginate: Number(limit),
+      order: [["created_at", "ASC"]],
+      include: [
+        {
+          model: User,
+          as: "therapist", // funciona porque usamos 'as' no model
+          attributes: ["id", "name", "email"],
+        },
+        {
+          model: Patient,
+          as: "patient",
+          attributes: ["id"],
+          attributes: ["id", "name", "email"],
+        },
+      ],
+    };
+
+    const { docs, pages, total } = await Appointment.paginate(options);
+
+    res.json({
+      data: docs,
+      meta: {
+        total,
+        pages,
+        currentPage: Number(page),
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Erro ao buscar sessões",
+      error: err.message,
+    });
+  }
+};
+
 exports.deleteAppointment = async (req, res) => {
   const { id } = req.params; // id da consulta
 
@@ -128,7 +169,6 @@ exports.deleteAppointment = async (req, res) => {
 };
 
 exports.getAllByUser = async (req, res) => {
-
   const id = await req.user.perfilInfo.id;
   const role = await req.user.role;
 
@@ -164,7 +204,6 @@ exports.getAllByUser = async (req, res) => {
 };
 
 exports.getAllByTherapist = async (req, res) => {
-
   const id = await req.user.perfilInfo.id;
   const role = await req.user.role;
 
