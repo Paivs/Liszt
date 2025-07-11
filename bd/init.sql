@@ -9,6 +9,7 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) CHECK(role IN ('therapist', 'patient', 'admin')) NOT NULL, -- 'therapist' ou 'patient'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_profile_complete BOOLEAN DEFAULT FALSE, 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

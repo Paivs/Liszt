@@ -3,7 +3,8 @@ import PatientAdminClient from "@/components/blocks/admin/patients/PatientAdminC
 import { apiServer } from "@/lib/api-server";
 
 export default async function patientAdminPage({ searchParams }) {
-  const page = Number(searchParams.page) || 1;
+  const params = await  searchParams
+  const page = Number(params.page) || 1;
   const { data, meta } = await apiServer.get(`patient/paginate?page=${page}`);
 
   return (

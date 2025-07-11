@@ -3,7 +3,8 @@ import AppointmentAdminClient from "@/components/blocks/admin/appointment/Appoin
 import { apiServer } from "@/lib/api-server";
 
 export default async function AppointmentAdminPage({ searchParams }) {
-  const page = Number(searchParams.page || 1);
+  const params = await searchParams;
+  const page = Number(params.page || 1);
   const { data, meta } = await apiServer.get(`appointment/paginate?page=${page}&limit=10`);
   
 

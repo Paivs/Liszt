@@ -1,8 +1,6 @@
 import { GalleryVerticalEnd } from "lucide-react";
-
-import { RegisterForm } from "@/components/register-form";
 import Link from "next/link";
-
+import { Registerfull } from "@/components/register-full-form";
 export default function RegisterPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
@@ -24,7 +22,7 @@ export default function RegisterPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <RegisterForm />
+            <Registerfull />
           </div>
         </div>
       </div>

@@ -1,9 +1,9 @@
 //@/lib/api-server.js
 import { cookies } from "next/headers";
-import { UnauthorizedError } from "./errors";
+import { ProfileIncompleteError, UnauthorizedError } from "./errors";
 
 async function apiFetchServer(path, options = {}) {
-  const cookiesStore = await cookies(); 
+  const cookiesStore = await cookies();
   const token = cookiesStore.get("token")?.value;
 
   const headers = {
@@ -18,16 +18,23 @@ async function apiFetchServer(path, options = {}) {
     cache: "no-store",
   });
 
-  if (res.status === 401 || res.status === 403) {
+  if (res.status === 401) {
     throw new UnauthorizedError();
+  }
+
+  const data = await res.json();
+
+  if (res.status === 403 && data?.code === "PROFILE_INCOMPLETE") {
+
+    throw new ProfileIncompleteError();
   }
 
   if (!res.ok) {
     let errorMessage = "Erro na requisição do servidor.";
     try {
-      const err = await res.json();
+      const err = data;
       console.log(err);
-      
+
       if (err?.message) errorMessage = err.message;
     } catch {
       // fallback
@@ -35,7 +42,7 @@ async function apiFetchServer(path, options = {}) {
     throw new Error(errorMessage);
   }
 
-  return res.json();
+  return data;
 }
 
 export const apiServer = {

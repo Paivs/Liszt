@@ -51,8 +51,11 @@ exports.listPaginated = async (req, res) => {
 // POST /therapists
 exports.create = async (req, res) => {
   try {
-    const { name, email, password, phone, crp } = req.body;
+    const { name, email, phone, crp } = req.body;
+    console.log(req.body);
+    
 
+    const password = "liszt@123"
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
@@ -60,7 +63,10 @@ exports.create = async (req, res) => {
       email,
       password_hash: hashedPassword,
       role: "therapist",
+      is_profile_complete: true,
     });
+
+ 
 
     const therapist = await Therapist.create({
       user_id: user.id,
@@ -73,6 +79,8 @@ exports.create = async (req, res) => {
 
     res.status(201).json(therapist);
   } catch (error) {
+    console.log(error);
+    
     res
       .status(400)
       .json({ message: "Erro ao criar terapeuta.", error: error.message });

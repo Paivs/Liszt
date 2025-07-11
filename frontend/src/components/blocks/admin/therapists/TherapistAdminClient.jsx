@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTherapists } from "@/hooks/useAdminTherapists";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,6 +39,8 @@ export default function TherapistAdminClient({ initialData, meta }) {
   const [selected, setSelected] = useState(null);
   const [filter, setFilter] = useState("all");
 
+  const dialogCloseRef = useRef(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -46,11 +48,11 @@ export default function TherapistAdminClient({ initialData, meta }) {
     crp: "",
   });
 
-    const router = useRouter();
-  
-    const handlePageChange = (page) => {
-      router.push(`?page=${page}`);
-    };
+  const router = useRouter();
+
+  const handlePageChange = (page) => {
+    router.push(`?page=${page}`);
+  };
 
   const filteredTherapists = therapists.filter((t) => {
     if (filter === "active") return !t.deactivated_at;
@@ -58,19 +60,28 @@ export default function TherapistAdminClient({ initialData, meta }) {
     return true;
   });
 
-  const handleCreate = async () => {
+  const handleCreate = async (e) => {
+    e.preventDefault();
     try {
       await addTherapist(formData);
       toast.success("Terapeuta criado com sucesso");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        crp: "",
+      });
     } catch (err) {
       toast.error("Erro ao criar terapeuta");
     }
   };
 
-  const handleUpdate = async () => {
+  const handleUpdate = async (e) => {
+    e.preventDefault();
     try {
       await updateTherapist(selected.id, selected);
       toast.success("Terapeuta atualizado");
+      dialogCloseRef.current?.click();
     } catch {
       toast.error("Erro ao atualizar terapeuta");
     }
@@ -139,39 +150,45 @@ export default function TherapistAdminClient({ initialData, meta }) {
                     Preencha os dados abaixo para cadastrar um novo terapeuta no
                     sistema.
                   </DialogDescription>
-                  <Input
-                    placeholder="Nome completo"
-                    className="mb-2"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                  />
-                  <Input
-                    placeholder="Email"
-                    className="mb-2"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                  />
-                  <Input
-                    placeholder="Telefone"
-                    className="mb-2"
-                    value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
-                  />
-                  <Input
-                    placeholder="CRP (opcional)"
-                    className="mb-2"
-                    value={formData.crp}
-                    onChange={(e) =>
-                      setFormData({ ...formData, crp: e.target.value })
-                    }
-                  />
-                  <Button onClick={handleCreate}>Criar</Button>
+                  <form onSubmit={handleCreate}>
+                    <Input
+                      placeholder="Nome completo"
+                      className="mb-2"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                    />
+                    <Input
+                      placeholder="Email"
+                      className="mb-2"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                    />
+                    <Input
+                      placeholder="Telefone"
+                      className="mb-2"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                    />
+                    <Input
+                      placeholder="CRP (opcional)"
+                      className="mb-2"
+                      value={formData.crp}
+                      onChange={(e) =>
+                        setFormData({ ...formData, crp: e.target.value })
+                      }
+                    />
+                    <DialogClose
+                      ref={dialogCloseRef}
+                      className="hidden"
+                    ></DialogClose>
+                    <Button type="submit">Criar</Button>
+                  </form>
                 </DialogContent>
               </Dialog>
             </div>
@@ -258,59 +275,65 @@ export default function TherapistAdminClient({ initialData, meta }) {
                             Edite os dados do terapeuta e salve as alterações ao
                             final.
                           </DialogDescription>
-                          <div className="flex items-center gap-2 mb-4">
-                            <Switch
-                              id="status"
-                              checked={!selected?.deactivated_at}
-                              onCheckedChange={() =>
-                                handleToggleStatus(selected.id)
+                          <form onSubmit={handleUpdate}>
+                            <div className="flex items-center gap-2 mb-4">
+                              <Switch
+                                id="status"
+                                checked={!selected?.deactivated_at}
+                                onCheckedChange={() =>
+                                  handleToggleStatus(selected.id)
+                                }
+                              />
+                              <label htmlFor="status">
+                                {selected?.deactivated_at ? "Inativo" : "Ativo"}
+                              </label>
+                            </div>
+                            <Input
+                              defaultValue={selected?.name}
+                              className="mb-2"
+                              onChange={(e) =>
+                                setSelected((prev) => ({
+                                  ...prev,
+                                  name: e.target.value,
+                                }))
                               }
                             />
-                            <label htmlFor="status">
-                              {selected?.deactivated_at ? "Inativo" : "Ativo"}
-                            </label>
-                          </div>
-                          <Input
-                            defaultValue={selected?.name}
-                            className="mb-2"
-                            onChange={(e) =>
-                              setSelected((prev) => ({
-                                ...prev,
-                                name: e.target.value,
-                              }))
-                            }
-                          />
-                          <Input
-                            defaultValue={selected?.email}
-                            className="mb-2"
-                            onChange={(e) =>
-                              setSelected((prev) => ({
-                                ...prev,
-                                email: e.target.value,
-                              }))
-                            }
-                          />
-                          <Input
-                            defaultValue={selected?.phone}
-                            className="mb-2"
-                            onChange={(e) =>
-                              setSelected((prev) => ({
-                                ...prev,
-                                phone: e.target.value,
-                              }))
-                            }
-                          />
-                          <Input
-                            defaultValue={selected?.crp}
-                            className="mb-2"
-                            onChange={(e) =>
-                              setSelected((prev) => ({
-                                ...prev,
-                                crp: e.target.value,
-                              }))
-                            }
-                          />
-                          <Button onClick={handleUpdate}>Salvar</Button>
+                            <Input
+                              defaultValue={selected?.email}
+                              className="mb-2"
+                              onChange={(e) =>
+                                setSelected((prev) => ({
+                                  ...prev,
+                                  email: e.target.value,
+                                }))
+                              }
+                            />
+                            <Input
+                              defaultValue={selected?.phone}
+                              className="mb-2"
+                              onChange={(e) =>
+                                setSelected((prev) => ({
+                                  ...prev,
+                                  phone: e.target.value,
+                                }))
+                              }
+                            />
+                            <Input
+                              defaultValue={selected?.crp}
+                              className="mb-2"
+                              onChange={(e) =>
+                                setSelected((prev) => ({
+                                  ...prev,
+                                  crp: e.target.value,
+                                }))
+                              }
+                            />
+                            <DialogClose
+                              ref={dialogCloseRef}
+                              className="hidden"
+                            ></DialogClose>
+                            <Button type="submit">Salvar</Button>
+                          </form>
                         </DialogContent>
                       </Dialog>
 
@@ -335,9 +358,11 @@ export default function TherapistAdminClient({ initialData, meta }) {
                           </DialogDescription>
                           <p>{selected?.name}</p>
                           <div className="flex justify-end gap-2 mt-4">
-                            <DialogClose asChild>
-                              <Button variant="ghost">Cancelar</Button>
-                            </DialogClose>
+                            <DialogClose
+                              ref={dialogCloseRef}
+                              className="hidden"
+                            ></DialogClose>
+                            <Button variant="ghost">Cancelar</Button>
                             <Button
                               variant="destructive"
                               onClick={() => handleDelete(selected.id)}
@@ -354,7 +379,7 @@ export default function TherapistAdminClient({ initialData, meta }) {
             </Table>
           </CardContent>
         </Card>
-      </div> 
+      </div>
 
       <Pagination
         currentPage={meta.currentPage}

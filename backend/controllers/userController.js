@@ -56,6 +56,10 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
+
+
+
+
 exports.updatePatientData = async (req, res) => {
   try {
     const id = req.user.perfilInfo.id;
