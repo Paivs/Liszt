@@ -1,3 +1,7 @@
-export default function Help({}){
-  return(<></>)
+export default function Help() {
+  return (
+    <>
+      <p>Help working</p>
+    </>
+  );
 }

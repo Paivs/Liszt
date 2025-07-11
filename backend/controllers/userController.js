@@ -2,7 +2,6 @@ const { User, Patient } = require("../models");
 const winston = require("../logs/logger");
 const bcrypt = require("bcryptjs");
 
-
 exports.updatePassword = async (req, res) => {
   try {
     const { last_password, new_password } = req.body;
@@ -51,9 +50,15 @@ exports.updateProfile = async (req, res) => {
     return res.status(200).json({ message: "Perfil atualizado com sucesso." });
   } catch (error) {
     winston.error("Erro ao atualizar perfil:", error);
-    return res.status(500).json({ message: "Erro interno ao atualizar perfil." });
+    return res
+      .status(500)
+      .json({ message: "Erro interno ao atualizar perfil." });
   }
 };
+
+
+
+
 
 exports.updatePatientData = async (req, res) => {
   try {
@@ -81,10 +86,14 @@ exports.updatePatientData = async (req, res) => {
 
     await patient.save();
 
-    return res.status(200).json({ message: "Dados do paciente atualizados com sucesso." });
+    return res
+      .status(200)
+      .json({ message: "Dados do paciente atualizados com sucesso." });
   } catch (error) {
     winston.error("Erro ao atualizar dados do paciente:", error);
-    return res.status(500).json({ message: "Erro interno ao atualizar dados do paciente." });
+    return res
+      .status(500)
+      .json({ message: "Erro interno ao atualizar dados do paciente." });
   }
 };
 
@@ -106,18 +115,8 @@ exports.listAllTherapist = async (req, res) => {
 exports.describeUser = async (req, res) => {
   try {
     const id = req.user.id;
-    const role = req.user.role;
 
-    let patientUser = null;
-
-    if (role === "patient") {
-      const patient_id = req.user.perfilInfo?.id;
-      if (!patient_id) {
-        return res.status(400).json({ message: "Perfil do paciente não encontrado." });
-      }
-
-      patientUser = req.user.perfilInfo;
-    }
+    const profile = req.user.perfilInfo;
 
     const user = await User.findOne({ where: { id } });
 
@@ -128,7 +127,7 @@ exports.describeUser = async (req, res) => {
     res.status(200).json({
       message: "Usuário encontrado com sucesso",
       user,
-      patientUser,
+      profile,
     });
   } catch (error) {
     console.error("Erro ao buscar usuário:", error);

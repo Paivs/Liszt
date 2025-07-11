@@ -3,6 +3,8 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const User = require('./user');
 const Patient = require('./patient');
+const sequelizePaginate = require("sequelize-paginate");
+
 
 const Appointment = sequelize.define('Appointment', {
   id: {
@@ -31,11 +33,13 @@ const Appointment = sequelize.define('Appointment', {
     allowNull: false,
   },
 }, {
+  tableName: 'appointment',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',
 });
 
+sequelizePaginate.paginate(Appointment);
 Appointment.belongsTo(User, { foreignKey: 'therapist_id' });
 Appointment.belongsTo(Patient, { foreignKey: 'patient_id' });
 

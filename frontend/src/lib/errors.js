@@ -4,3 +4,10 @@ export class UnauthorizedError extends Error {
     this.name = "UnauthorizedError";
   }
 }
+
+export class ProfileIncompleteError extends Error {
+  constructor(message = "Perfil incompleto.") {
+    super(message);
+    this.name = "ProfileIncompleteError";
+  }
+}

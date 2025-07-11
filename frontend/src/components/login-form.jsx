@@ -14,7 +14,6 @@ import { useUser } from "@/lib/UserContext";
 export function LoginForm({ className, ...props }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [caseCode] = useState(""); // Adicione um input para isso se necessário
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -40,6 +39,8 @@ export function LoginForm({ className, ...props }) {
         if (user.role === "patient") {
           router.push("/patient/dashboard");
         } else if (user.role === "therapist") {
+          router.push("/therapist/dashboard");
+        } else if (user.role === "admin") {
           router.push("/admin/dashboard");
         }else{
           throw new Error("Erro ao identificar seu usuário")

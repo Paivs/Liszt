@@ -1,6 +1,7 @@
 const { User, Patient } = require("../models");
 const winston = require("../logs/logger");
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
 const bcrypt = require("bcryptjs");
 
 exports.listAllPatients = async (req, res) => {
@@ -12,6 +13,39 @@ exports.listAllPatients = async (req, res) => {
   } catch (error) {
     winston.error("Erro ao listar pacientes:", error);
     res.status(500).json({ message: "Erro interno ao listar pacientes." });
+  }
+};
+
+exports.listPaginated = async (req, res) => {
+  const { page = 1, limit = 10, search = "" } = req.query;
+
+  try {
+    const options = {
+      page: parseInt(page),
+      paginate: parseInt(limit),
+      where: search
+        ? {
+            name: {
+              [Op.iLike]: `%${search}%`,
+            },
+          }
+        : {},
+      order: [["created_at", "DESC"]],
+    };
+
+    const { docs, pages, total } = await Patient.paginate(options);
+
+    res.json({
+      data: docs,
+      meta: {
+        total,
+        pages,
+        currentPage: page,
+      },
+    });
+  } catch (error) {
+    console.error("Erro na paginação:", error);
+    res.status(500).json({ message: "Erro ao listar pacientes com paginação." });
   }
 };
 
@@ -82,6 +116,42 @@ exports.deletePatientAndUser = async (req, res) => {
     res.status(500).json({ message: "Erro interno ao deletar paciente e usuário." });
   }
 };
+
+exports.updatePatient = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      cpf,
+      email,
+      phone,
+      emergency_contact_name,
+      emergency_contact_phone,
+      address,
+    } = req.body;
+
+    const patient = await Patient.findByPk(id);
+    if (!patient) {
+      return res.status(404).json({ message: "Paciente não encontrado" });
+    }
+
+    await patient.update({
+      name,
+      cpf,
+      email,
+      phone,
+      emergency_contact_name,
+      emergency_contact_phone,
+      address,
+    });
+
+    res.status(200).json({ patient });
+  } catch (error) {
+    winston.error("Erro ao atualizar paciente:", error);
+    res.status(500).json({ message: "Erro interno ao atualizar paciente." });
+  }
+};
+
 
 
 

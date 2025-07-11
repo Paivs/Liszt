@@ -19,9 +19,8 @@ const logoHeight = 40;
 const menuItems = [
   { label: "Dashboard", href: "/admin/dashboard" },
   { label: "Pacientes", href: "/admin/patients" },
-  { label: "Diários", href: "/admin/journal" },
+  { label: "Terapeutas", href: "/admin/therapists" },
   { label: "Sessões", href: "/admin/appointment" },
-  { label: "Configurações", href: "/admin/settings" },
 ];
 
 const loginLink = "/login";

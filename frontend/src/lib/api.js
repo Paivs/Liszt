@@ -1,6 +1,8 @@
 // lib/api.js
 import { toast } from "sonner";
 import { redirectToLogin } from "./redirect";
+import { redirectToCompleteRegister } from "./completeRegister";
+import { ProfileIncompleteError } from "./errors";
 
 export function getTokenFromCookie(ctx) {
   if (ctx && ctx.req) {
@@ -16,12 +18,10 @@ export function getTokenFromCookie(ctx) {
   return null;
 }
 
-
-
 // Função genérica
 export async function apiFetch(path, options = {}) {
   const token = getTokenFromCookie();
-  
+
   const headers = {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
@@ -34,14 +34,22 @@ export async function apiFetch(path, options = {}) {
       headers,
     });
 
-    // Token expirado
     if (res.status === 403) {
+      const data = await res.json();
+      if (data.code === "PROFILE_INCOMPLETE") {
+        // toast.warning("Complete o login para continuar!");
+        // setTimeout(() => redirectToCompleteRegister(), 2500);
+        throw new ProfileIncompleteError();
+      }
+    }
+
+    // Token expirado
+    if (res.status === 401) {
       toast.error("Sessão expirada. Faça login novamente.");
       document.cookie = "token=; Max-Age=0; path=/";
       setTimeout(() => redirectToLogin(), 2500);
       // throw new Error("Sessão expirada");u
     }
-    
 
     if (res.status === 406) {
       return res.json();

@@ -4,6 +4,8 @@ import { UserProvider } from "@/lib/UserContext";
 import { Toaster } from "sonner";
 import { RedirectProvider } from "@/lib/redirect";
 import { Jost, Archivo } from "next/font/google";
+import { RedirectCompleteRegisterProvider } from "@/lib/completeRegister";
+import Notifier from "@/components/Notifier";
 
 const jost = Jost({
   subsets: ["latin"],
@@ -29,7 +31,9 @@ export default function RootLayout({ children }) {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <UserProvider>
             <RedirectProvider />
-            <Toaster richColors position="top-center" />
+            <RedirectCompleteRegisterProvider/>
+            <Toaster expand={true} richColors />
+            <Notifier/>
             {children}
           </UserProvider>
         </ThemeProvider>

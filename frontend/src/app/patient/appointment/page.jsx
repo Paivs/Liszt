@@ -7,7 +7,7 @@ export default async function Agendamento() {
   let terapeutas = [];
   let agendamentos = [];
 
-  try {
+
     const [terapeutasRes, agendamentosRes] = await Promise.all([
       apiServer.get("user/therapist"),
       apiServer.get("appointment"),
@@ -16,11 +16,7 @@ export default async function Agendamento() {
     terapeutas = terapeutasRes || [];
     console.log(terapeutasRes)
     agendamentos = agendamentosRes || [];
-  } catch (error) {
-    if (error instanceof UnauthorizedError) {
-      redirect("/login");
-    }
-  }
+
 
   return (
     <div className="min-h-screen pt-20 p-6">

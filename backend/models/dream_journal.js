@@ -43,6 +43,8 @@ const DreamJournal = sequelize.define('DreamJournal', {
     allowNull: true,
   },
 }, {
+
+  tableName: 'dream_journal',
   timestamps: true,
   createdAt: 'created_at',
   updatedAt: 'updated_at',

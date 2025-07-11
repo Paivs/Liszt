@@ -36,3 +36,8 @@ export async function registerUser(payload) {
 
   return data; // { token, user }
 }
+
+export async function registerFullUser(payload) {
+  const data = await api.post("auth/registerfull", payload);
+  return data; // { token, user }
+}
