@@ -1,46 +1,59 @@
 // models/session.js
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
-const User = require('./user');
-const Patient = require('./patient');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/db");
+const User = require("./user");
+const Patient = require("./patient");
 const sequelizePaginate = require("sequelize-paginate");
 
-
-const Appointment = sequelize.define('Appointment', {
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true,
-  },
-  therapist_id: {
-    type: DataTypes.UUID,
-    references: {
-      model: User,
-      key: 'id',
+const Appointment = sequelize.define(
+  "Appointment",
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
     },
-    allowNull: false,
-  },
-  patient_id: {
-    type: DataTypes.UUID,
-    references: {
-      model: Patient,
-      key: 'id',
+    therapist_id: {
+      type: DataTypes.UUID,
+      references: {
+        model: User,
+        key: "id",
+      },
+      allowNull: false,
     },
-    allowNull: false,
+    patient_id: {
+      type: DataTypes.UUID,
+      references: {
+        model: Patient,
+        key: "id",
+      },
+      allowNull: false,
+    },
+    type_appointment: {
+      type: DataTypes.STRING,
+    },
+    status_appointment: {
+      type: DataTypes.STRING,
+      defaultValue: "pendente",
+      validate: {
+        isIn: [["pendente", "aprovada", "reprovada", "concluida", "cancelada"]],
+      },
+    },
+    scheduled_time: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
   },
-  scheduled_time: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-}, {
-  tableName: 'appointment',
-  timestamps: true,
-  createdAt: 'created_at',
-  updatedAt: 'updated_at',
-});
+  {
+    tableName: "appointment",
+    timestamps: true,
+    createdAt: "created_at",
+    updatedAt: "updated_at",
+  }
+);
 
 sequelizePaginate.paginate(Appointment);
-Appointment.belongsTo(User, { foreignKey: 'therapist_id' });
-Appointment.belongsTo(Patient, { foreignKey: 'patient_id' });
+Appointment.belongsTo(User, { foreignKey: "therapist_id" });
+Appointment.belongsTo(Patient, { foreignKey: "patient_id" });
 
 module.exports = Appointment;

@@ -250,6 +250,79 @@ exports.getAllByTherapist = async (req, res) => {
   }
 };
 
+exports.listAppointmentsByDateRange = async (req, res) => {
+  const { page = 1, limit = 10, startDate, endDate } = req.query;
+
+  try {
+    const where = {};
+
+    if (startDate || endDate) {
+      where.scheduled_time = {};
+      if (startDate) {
+        where.scheduled_time[Op.gte] = new Date(startDate);
+      }
+      if (endDate) {
+        where.scheduled_time[Op.lte] = new Date(endDate);
+      }
+    }
+
+    const options = {
+      page: Number(page),
+      paginate: Number(limit),
+      order: [["scheduled_time", "ASC"]],
+      where,
+      include: [
+        {
+          model: User,
+          as: "therapist", // Inclui o terapeuta
+          attributes: ["id", "name", "email"],
+        },
+        {
+          model: Patient,
+          as: "patient", // Inclui o paciente
+          attributes: ["id", "name", "email"],
+        },
+      ],
+    };
+
+    const { docs, pages, total } = await Appointment.paginate(options);
+
+    // Formatar os dados para enviar ao frontend
+    const formattedAppointments = docs.map((appointment) => {
+      const formattedStartTime = new Date(appointment.scheduled_time);
+      const formattedEndTime = new Date(appointment.scheduled_time);
+      formattedEndTime.setHours(formattedEndTime.getHours() + 1); // Definindo um horário de fim de 1h após o início
+
+      return {
+        id: appointment.id,
+        title: `${appointment.patient.name}`, // Pode ser o tipo de agendamento, ou o título que você preferir
+        description: `${appointment.type_appointment} - ${appointment.obs || "Sem descrição"}`, // Observações adicionais
+        start: formattedStartTime, // Hora de início
+        end: formattedEndTime, // Hora de fim
+        patient: appointment.patient.name, // Nome do paciente
+        color: "sky", // Cor para o evento, pode ser personalizada
+        location: "Consultório", // Localização, você pode personalizar
+        allDay: false, // Se for um evento de dia inteiro
+      };
+    });
+
+    res.json({
+      data: formattedAppointments,
+      meta: {
+        total,
+        pages,
+        currentPage: Number(page),
+      },
+    });
+  } catch (error) {
+    winston.error("Erro ao buscar sessões:", error);
+    res.status(500).json({
+      message: "Erro ao buscar sessões",
+      error: error.message,
+    });
+  }
+};
+
 async function getPatientByUser(id) {
   const patient = await Patient.findOne({ where: { user_id: id } });
 
