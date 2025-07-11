@@ -1,5 +1,6 @@
 const { Appointment, User, Patient } = require("../models");
 const winston = require("../logs/logger");
+const { Op } = require("sequelize");
 
 exports.create = async (req, res) => {
   const { therapist_id, scheduled_time, type_appointment, obs } = req.body;
@@ -94,23 +95,34 @@ exports.getAll = async (req, res) => {
 };
 
 exports.listPaginated = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query;
-
+  const { page = 1, limit = 10, startDate, endDate } = req.query;
   try {
+    const where = {};
+
+    if (startDate || endDate) {
+      where.scheduled_time = {};
+      if (startDate) {
+        where.scheduled_time[Op.gte] = new Date(startDate);
+      }
+      if (endDate) {
+        where.scheduled_time[Op.lte] = new Date(endDate);
+      }
+    }
+
     const options = {
       page: Number(page),
       paginate: Number(limit),
-      order: [["created_at", "ASC"]],
+      order: [["scheduled_time", "ASC"]],
+      where,
       include: [
         {
           model: User,
-          as: "therapist", // funciona porque usamos 'as' no model
+          as: "therapist",
           attributes: ["id", "name", "email"],
         },
         {
           model: Patient,
           as: "patient",
-          attributes: ["id"],
           attributes: ["id", "name", "email"],
         },
       ],

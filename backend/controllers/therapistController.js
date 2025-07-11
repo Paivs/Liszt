@@ -1,4 +1,5 @@
 const { Therapist, User } = require("../models");
+const { Op } = require("sequelize");
 const bcrypt = require("bcryptjs");
 
 // GET /therapists
@@ -17,23 +18,39 @@ exports.getAll = async (req, res) => {
 
 exports.listPaginated = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = "" } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const filter = req.query.filter || null;
+    const search = req.query.search?.trim() || "";
+
+    const where = {};
+
+    // Filtro por nome
+    if (search) {
+      where.name = {
+        [Op.iLike]: `%${search}%`,
+      };
+    }
+
+    // Filtro por status
+    if (filter == "active") {
+      where.deactivated_at = null;
+    } else if (filter == "inactive") {
+      where.deactivated_at = {
+        [Op.ne]: null,
+      };
+    }
 
     const options = {
-      page: Number(page),
-      paginate: Number(limit),
+      page,
+      paginate: limit,
       order: [["created_at", "DESC"]],
-      where: search
-        ? {
-            name: { [Op.iLike]: `%${search}%` },
-          }
-        : {},
-        order: [["created_at", "DESC"]],
+      where,
     };
 
     const { docs, pages, total } = await Therapist.paginate(options);
 
-    res.json({
+    return res.json({
       data: docs,
       meta: {
         total,
@@ -43,9 +60,11 @@ exports.listPaginated = async (req, res) => {
     });
   } catch (error) {
     console.error("Erro ao paginar terapeutas:", error);
-    res.status(500).json({ message: "Erro interno ao listar terapeutas." });
+    return res.status(500).json({
+      message: "Erro interno ao listar terapeutas.",
+    });
   }
-};
+}; 
 
 
 // POST /therapists

@@ -3,12 +3,13 @@ import TherapistAdminClient from "@/components/blocks/admin/therapists/Therapist
 import { apiServer } from "@/lib/api-server";
 
 export default async function TherapistAdminPage({ searchParams }) {
-  const params = await  searchParams
+  const params = await searchParams
   const page = params.page || 1;
+  const filter = params.filter || "";
   const limit = 10;
   const search = params.search || "";
 
-  const  { data, meta }  = await apiServer.get(`therapists/paginate?page=${page}&limit=${limit}&search=${search}`);
+  const  { data, meta }  = await apiServer.get(`therapists/paginate?page=${page}&limit=${limit}&search=${search}&filter=${filter}`);
 
   return (
     <>

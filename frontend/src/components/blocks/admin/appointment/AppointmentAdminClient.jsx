@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppointments } from "@/hooks/useAdminAppointments";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Table,
   TableHeader,
@@ -20,9 +20,10 @@ import {
 import { Trash2 } from "lucide-react";
 import Pagination from "@/components/ui/pagination";
 import { useRouter } from "next/navigation";
+import AppointmentFilterBar from "@/components/AppointmentFilterBar";
 
 export default function AppointmentAdminClient({ initialData, meta }) {
-  const { appointments, updateStatus, deleteAppointment } =
+  const { appointments, updateStatus, fetchAppointments, deleteAppointment } =
     useAppointments(initialData);
 
   const router = useRouter();
@@ -35,6 +36,14 @@ export default function AppointmentAdminClient({ initialData, meta }) {
     <>
       <Card>
         <CardContent className="p-4">
+          <CardHeader>
+            <h2 className="text-xl font-bold">Gerenciar Sessões</h2>
+            <AppointmentFilterBar
+              onFilter={({ startDate, endDate }) =>
+                fetchAppointments({ startDate, endDate, page: 1 })
+              }
+            />
+          </CardHeader>
           <Table>
             <TableHeader>
               <TableRow>
@@ -89,7 +98,7 @@ export default function AppointmentAdminClient({ initialData, meta }) {
           </Table>
         </CardContent>
       </Card>
-      
+
       <Pagination
         currentPage={meta.currentPage}
         totalPages={meta.pages}

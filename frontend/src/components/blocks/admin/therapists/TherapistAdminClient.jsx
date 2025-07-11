@@ -26,6 +26,7 @@ import { Pencil, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
 import Pagination from "@/components/ui/pagination";
 import { useRouter } from "next/navigation";
+import TherapistSearchBar from "@/components/TherapistSearchBar";
 
 export default function TherapistAdminClient({ initialData, meta }) {
   const {
@@ -33,11 +34,11 @@ export default function TherapistAdminClient({ initialData, meta }) {
     addTherapist,
     deleteTherapist,
     updateTherapist,
+    fetchTherapists,
     toggleStatus,
   } = useTherapists(initialData);
 
   const [selected, setSelected] = useState(null);
-  const [filter, setFilter] = useState("all");
 
   const dialogCloseRef = useRef(null);
 
@@ -53,12 +54,6 @@ export default function TherapistAdminClient({ initialData, meta }) {
   const handlePageChange = (page) => {
     router.push(`?page=${page}`);
   };
-
-  const filteredTherapists = therapists.filter((t) => {
-    if (filter === "active") return !t.deactivated_at;
-    if (filter === "inactive") return t.deactivated_at;
-    return true;
-  });
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -96,6 +91,10 @@ export default function TherapistAdminClient({ initialData, meta }) {
     }
   };
 
+  const handleFilter = ({ search, filter }) => {
+    fetchTherapists({ search, filter, page: 1 });
+  };
+
   const handleToggleStatus = async (id) => {
     try {
       const updated = await toggleStatus(id);
@@ -116,29 +115,7 @@ export default function TherapistAdminClient({ initialData, meta }) {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-bold">Gerenciar Terapeutas</h2>
-                <div className="space-x-2 mt-1">
-                  <Button
-                    variant={filter === "all" ? "default" : "outline"}
-                    onClick={() => setFilter("all")}
-                    size="sm"
-                  >
-                    Todos
-                  </Button>
-                  <Button
-                    variant={filter === "active" ? "default" : "outline"}
-                    onClick={() => setFilter("active")}
-                    size="sm"
-                  >
-                    Ativos
-                  </Button>
-                  <Button
-                    variant={filter === "inactive" ? "default" : "outline"}
-                    onClick={() => setFilter("inactive")}
-                    size="sm"
-                  >
-                    Inativos
-                  </Button>
-                </div>
+                <TherapistSearchBar onFilter={handleFilter}/>
               </div>
               <Dialog>
                 <DialogTrigger asChild>
@@ -206,7 +183,7 @@ export default function TherapistAdminClient({ initialData, meta }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTherapists.map((t) => (
+                {therapists && therapists.map((t) => (
                   <TableRow key={t.id}>
                     <TableCell>{t.name}</TableCell>
                     <TableCell>{t.email}</TableCell>

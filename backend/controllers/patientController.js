@@ -1,6 +1,7 @@
 const { User, Patient } = require("../models");
 const winston = require("../logs/logger");
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
 const bcrypt = require("bcryptjs");
 
 exports.listAllPatients = async (req, res) => {

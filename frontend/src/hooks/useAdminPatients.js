@@ -2,8 +2,32 @@ import { api } from "@/lib/api";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function usePatients(initialData = []) {
+export function usePatients(initialData = [], initialMeta = {}) {
   const [patients, setPatients] = useState(initialData);
+  const [meta, setMeta] = useState(initialMeta);
+  const [loading, setLoading] = useState(false);
+
+
+  const fetchPatients = async ({
+    page = 1,
+    limit = 10,
+    search = "",
+    filter = "all",
+  }) => {
+    setLoading(true);
+
+    const params = new URLSearchParams();
+    params.set("page", page);
+    params.set("limit", limit);
+    if (search) params.set("search", search);
+    if (filter && filter !== "all") params.set("filter", filter);
+
+    const res = await api.get(`patient/paginate?${params.toString()}`);
+
+    setPatients(res.data);
+    setMeta(res.meta);
+    setLoading(false);
+  };
 
   const addPatient = async (data) => {
     try {
@@ -34,5 +58,5 @@ export function usePatients(initialData = []) {
     }
   };
 
-  return { patients, addPatient, updatePatient, deletePatient };
+  return { patients, addPatient, updatePatient, fetchPatients, deletePatient };
 }

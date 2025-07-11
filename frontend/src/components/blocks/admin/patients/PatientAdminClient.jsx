@@ -25,9 +25,10 @@ import {
 } from "@/components/ui/dialog";
 import { Pencil, Trash2, Eye } from "lucide-react";
 import Pagination from "@/components/ui/pagination";
+import PatientSearchBar from "@/components/PatientSearchBar";
 
 export default function PatientAdminClient({ initialData, meta }) {
-  const { patients, addPatient, deletePatient, updatePatient } =
+  const { patients, addPatient, deletePatient, fetchPatients, updatePatient } =
     usePatients(initialData);
 
   const [selected, setSelected] = useState(null);
@@ -55,6 +56,10 @@ export default function PatientAdminClient({ initialData, meta }) {
 
   const handlePageChange = (page) => {
     router.push(`?page=${page}`);
+  };
+
+  const handleFilter = ({ search, filter }) => {
+    fetchPatients({ search, filter, page: 1 });
   };
 
   const handleCreate = async () => {
@@ -114,6 +119,7 @@ export default function PatientAdminClient({ initialData, meta }) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold">Gerenciar Pacientes</h2>
+
               <Dialog>
                 <DialogTrigger asChild>
                   <Button>Adicionar Paciente</Button>
@@ -137,6 +143,10 @@ export default function PatientAdminClient({ initialData, meta }) {
                   <Button onClick={handleCreate}>Criar</Button>
                 </DialogContent>
               </Dialog>
+            </div>
+
+            <div className="max-w-xl">
+              <PatientSearchBar onFilter={handleFilter} />
             </div>
 
             <Table>

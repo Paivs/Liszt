@@ -3,9 +3,13 @@ import PatientAdminClient from "@/components/blocks/admin/patients/PatientAdminC
 import { apiServer } from "@/lib/api-server";
 
 export default async function patientAdminPage({ searchParams }) {
-  const params = await  searchParams
-  const page = Number(params.page) || 1;
-  const { data, meta } = await apiServer.get(`patient/paginate?page=${page}`);
+  const params = await searchParams
+  const page = params.page || 1;
+  const filter = params.filter || "";
+  const limit = 10;
+  const search = params.search || "";
+
+  const  { data, meta }  = await apiServer.get(`patient/paginate?page=${page}&limit=${limit}&search=${search}&filter=${filter}`);
 
   return (
     <>
