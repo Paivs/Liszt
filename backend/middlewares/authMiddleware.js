@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { User, Patient } = require("../models");
+const { User, Patient, Therapist, Admin } = require("../models");
 
 module.exports = async (req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
@@ -19,7 +19,6 @@ module.exports = async (req, res, next) => {
     let perfilInfo = null;
 
     if (usuario.role === "patient") {
-      
       if (!usuario.is_profile_complete) {
         return res.status(403).json({
           code: "PROFILE_INCOMPLETE",
@@ -28,8 +27,10 @@ module.exports = async (req, res, next) => {
       }
 
       perfilInfo = await Patient.findOne({ where: { user_id: usuario.id } });
-    } else if (usuario.role === "therapist" || usuario.role === "admin") {
-      perfilInfo = {}; // quando tiver os modelos, adicione aqui
+    } else if (usuario.role === "therapist") {
+      perfilInfo = await Therapist.findOne({ where: { user_id: usuario.id } });
+    } else if (usuario.role === "admin") {
+      perfilInfo = await Admin.findOne({ where: { user_id: usuario.id } });
     } else {
       return res.status(400).json({
         code: "INVALID_ROLE",

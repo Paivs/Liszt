@@ -12,6 +12,7 @@ import {
   subMonths,
   subWeeks,
 } from "date-fns"
+import { ptBR } from "date-fns/locale";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -49,7 +50,8 @@ export function EventCalendar({
   onEventUpdate,
   onEventDelete,
   className,
-  initialView = "month"
+  onViewChange,
+  initialView = "mes"
 }) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [view, setView] = useState(initialView)
@@ -72,13 +74,13 @@ export function EventCalendar({
 
       switch (e.key.toLowerCase()) {
         case "m":
-          setView("month")
+          setView("mes")
           break
         case "w":
-          setView("week")
+          setView("semana")
           break
         case "d":
-          setView("day")
+          setView("dia")
           break
         case "a":
           setView("agenda")
@@ -93,12 +95,16 @@ export function EventCalendar({
     };
   }, [isEventDialogOpen])
 
+  useEffect(() => {
+    onViewChange(view)
+  }, [view])
+
   const handlePrevious = () => {
-    if (view === "month") {
+    if (view === "mes") {
       setCurrentDate(subMonths(currentDate, 1))
-    } else if (view === "week") {
+    } else if (view === "semana") {
       setCurrentDate(subWeeks(currentDate, 1))
-    } else if (view === "day") {
+    } else if (view === "dia") {
       setCurrentDate(addDays(currentDate, -1))
     } else if (view === "agenda") {
       // For agenda view, go back 30 days (a full month)
@@ -107,11 +113,11 @@ export function EventCalendar({
   }
 
   const handleNext = () => {
-    if (view === "month") {
+    if (view === "mes") {
       setCurrentDate(addMonths(currentDate, 1))
-    } else if (view === "week") {
+    } else if (view === "semana") {
       setCurrentDate(addWeeks(currentDate, 1))
-    } else if (view === "day") {
+    } else if (view === "dia") {
       setCurrentDate(addDays(currentDate, 1))
     } else if (view === "agenda") {
       // For agenda view, go forward 30 days (a full month)
@@ -207,27 +213,27 @@ export function EventCalendar({
   }
 
   const viewTitle = useMemo(() => {
-    if (view === "month") {
-      return format(currentDate, "MMMM yyyy");
-    } else if (view === "week") {
+    if (view === "mes") {
+      return format(currentDate, "MMMM yyyy", {locale: ptBR});
+    } else if (view === "semana") {
       const start = startOfWeek(currentDate, { weekStartsOn: 0 })
       const end = endOfWeek(currentDate, { weekStartsOn: 0 })
       if (isSameMonth(start, end)) {
-        return format(start, "MMMM yyyy");
+        return format(start, "MMMM yyyy", {locale: ptBR});
       } else {
-        return `${format(start, "MMM")} - ${format(end, "MMM yyyy")}`;
+        return `${format(start, "MMM", {locale: ptBR})} - ${format(end, "MMM yyyy", {locale: ptBR})}`;
       }
-    } else if (view === "day") {
+    } else if (view === "dia") {
       return (
         <>
           <span className="min-[480px]:hidden" aria-hidden="true">
-            {format(currentDate, "MMM d, yyyy")}
+            {format(currentDate, "MMM d, yyyy", {locale: ptBR})}
           </span>
           <span className="max-[479px]:hidden min-md:hidden" aria-hidden="true">
-            {format(currentDate, "MMMM d, yyyy")}
+            {format(currentDate, "MMMM d, yyyy", {locale: ptBR})}
           </span>
           <span className="max-md:hidden">
-            {format(currentDate, "EEE MMMM d, yyyy")}
+            {format(currentDate, "EEE MMMM d, yyyy", {locale: ptBR})}
           </span>
         </>
       );
@@ -237,18 +243,18 @@ export function EventCalendar({
       const end = addDays(currentDate, AgendaDaysToShow - 1)
 
       if (isSameMonth(start, end)) {
-        return format(start, "MMMM yyyy");
+        return format(start, "MMMM yyyy", {locale: ptBR});
       } else {
-        return `${format(start, "MMM")} - ${format(end, "MMM yyyy")}`;
+        return `${format(start, "MMM", {locale: ptBR})} - ${format(end, "MMM yyyy", {locale: ptBR})}`;
       }
     } else {
-      return format(currentDate, "MMMM yyyy");
+      return format(currentDate, "MMMM yyyy", {locale: ptBR});
     }
   }, [currentDate, view])
 
   return (
     <div
-      className="flex flex-col rounded-lg border has-data-[slot=month-view]:flex-1"
+      className="flex flex-col rounded-lg has-data-[slot=month-view]:flex-1"
       style={
         {
           "--event-height": `${EventHeight}px`,
@@ -264,7 +270,7 @@ export function EventCalendar({
               className="max-[479px]:aspect-square max-[479px]:p-0!"
               onClick={handleToday}>
               <RiCalendarCheckLine className="min-[480px]:hidden" size={16} aria-hidden="true" />
-              <span className="max-[479px]:sr-only">Today</span>
+              <span className="max-[479px]:sr-only">Hoje</span>
             </Button>
             <div className="flex items-center sm:gap-2">
               <Button
@@ -298,14 +304,14 @@ export function EventCalendar({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="min-w-32">
-                <DropdownMenuItem onClick={() => setView("month")}>
-                  Month <DropdownMenuShortcut>M</DropdownMenuShortcut>
+                <DropdownMenuItem onClick={() => setView("mes")}>
+                  Mês <DropdownMenuShortcut>M</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setView("week")}>
-                  Week <DropdownMenuShortcut>W</DropdownMenuShortcut>
+                <DropdownMenuItem onClick={() => setView("semana")}>
+                  Semana <DropdownMenuShortcut>S</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setView("day")}>
-                  Day <DropdownMenuShortcut>D</DropdownMenuShortcut>
+                <DropdownMenuItem onClick={() => setView("dia")}>
+                  Dia <DropdownMenuShortcut>D</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setView("agenda")}>
                   Agenda <DropdownMenuShortcut>A</DropdownMenuShortcut>
@@ -320,27 +326,27 @@ export function EventCalendar({
                 setIsEventDialogOpen(true)
               }}>
               <PlusIcon className="opacity-60 sm:-ms-1" size={16} aria-hidden="true" />
-              <span className="max-sm:sr-only">New event</span>
+              <span className="max-sm:sr-only">Nova sessão</span>
             </Button>
           </div>
         </div>
 
         <div className="flex flex-1 flex-col">
-          {view === "month" && (
+          {view === "mes" && (
             <MonthView
               currentDate={currentDate}
               events={events}
               onEventSelect={handleEventSelect}
               onEventCreate={handleEventCreate} />
           )}
-          {view === "week" && (
+          {view === "semana" && (
             <WeekView
               currentDate={currentDate}
               events={events}
               onEventSelect={handleEventSelect}
               onEventCreate={handleEventCreate} />
           )}
-          {view === "day" && (
+          {view === "dia" && (
             <DayView
               currentDate={currentDate}
               events={events}

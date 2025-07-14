@@ -8,9 +8,6 @@ import { addDays, setHours, setMinutes } from "date-fns";
 const AppointmentTherapistClient = ({ initialData, meta }) => {
   const [appointments, setAppointments] = useState(initialData);
 
-  console.log(appointments);
-  
-
   useEffect(() => {
     setAppointments(initialData);
   }, [initialData]);
@@ -21,8 +18,12 @@ const AppointmentTherapistClient = ({ initialData, meta }) => {
       const timeSlot = `${hour}:${minute === 0 ? "00" : "30"}`;
       availableTimes.push({
         time: timeSlot,
-        isBooked: appointments.some((appointment) =>
-          new Date(appointment.scheduled_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) === timeSlot
+        isBooked: appointments.some(
+          (appointment) =>
+            new Date(appointment.scheduled_time).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }) === timeSlot
         ),
       });
     }
@@ -44,40 +45,41 @@ const AppointmentTherapistClient = ({ initialData, meta }) => {
     setAppointments(appointments.filter((event) => event.id !== eventId));
   };
 
+  const handleViewChange = (view) => {
+    console.log(view);
+  };
+
   return (
     <div className="px-4 space-y-6">
-      <h2 className="text-xl font-semibold">Gerenciamento de Agendamentos</h2>
-
       <EventCalendar
         events={appointments}
         onEventAdd={handleEventAdd}
         onEventUpdate={handleEventUpdate}
         onEventDelete={handleEventDelete}
-        initialView="week"
+        onViewChange={handleViewChange}
+        initialView="semana"
       />
 
-      <div className="flex justify-between items-center">
-        <div>
-          <span className="text-sm">Página {meta.currentPage} de {meta.pages}</span>
-        </div>
-        <div>
-          <Button
-            disabled={meta.currentPage === 1}
-            onClick={() => {
-              // Lógica para ir para a página anterior
-            }}
-          >
-            Anterior
-          </Button>
-          <Button
-            disabled={meta.currentPage === meta.pages}
-            onClick={() => {
-              // Lógica para ir para a próxima página
-            }}
-          >
-            Próxima
-          </Button>
-        </div>
+      <div className="flex justify-center gap-4 my-2 items-center">
+        <Button
+          disabled={meta.currentPage === 1}
+          onClick={() => {
+            // Lógica para ir para a página anterior
+          }}
+        >
+          Anterior
+        </Button>
+        <span className="text-sm">
+          Página {meta.currentPage} de {meta.pages}
+        </span>
+        <Button
+          disabled={meta.currentPage === meta.pages}
+          onClick={() => {
+            // Lógica para ir para a próxima página
+          }}
+        >
+          Próxima
+        </Button>
       </div>
     </div>
   );

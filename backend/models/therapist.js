@@ -39,12 +39,6 @@ const Therapist = sequelize.define(
     address: {
       type: DataTypes.TEXT,
     },
-    accepts_local: {
-      type: DataTypes.BOOLEAN,
-    },
-    available_days: {
-      type: DataTypes.ARRAY(DataTypes.TEXT),
-    },
     price: {
       type: DataTypes.DECIMAL(10, 2),
     },
@@ -70,6 +64,31 @@ const Therapist = sequelize.define(
     },
     approach: {
       type: DataTypes.TEXT,
+    },
+    available_days: {
+      type: DataTypes.ARRAY(DataTypes.TEXT), // Armazenando os dias em formato JSON (Exemplo: ["Segunda", "Terça"])
+      // allowNull: false,
+      // defaultValue: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"], // Padrão para todos os dias úteis
+    },
+    start_time: {
+      type: DataTypes.TIME,
+      allowNull: false,
+      defaultValue: "08:00", // Valor padrão para horário de início
+    },
+    end_time: {
+      type: DataTypes.TIME,
+      allowNull: false,
+      defaultValue: "18:00", // Valor padrão para horário de término
+    },
+    accepts_remote: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false, // Aceita atendimento remoto por padrão é 'false'
+    },
+    accepts_presential: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true, // Aceita atendimento presencial por padrão é 'true'
     },
     last_login: {
       type: DataTypes.DATE,

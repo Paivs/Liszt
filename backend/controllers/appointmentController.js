@@ -1,4 +1,4 @@
-const { Appointment, User, Patient } = require("../models");
+const { Appointment, User, Patient, Therapist } = require("../models");
 const winston = require("../logs/logger");
 const { Op } = require("sequelize");
 
@@ -319,6 +319,82 @@ exports.listAppointmentsByDateRange = async (req, res) => {
     res.status(500).json({
       message: "Erro ao buscar sessões",
       error: error.message,
+    });
+  }
+};
+
+exports.getAppointmentSettingsByTherapist = async (req, res) => {
+  try {
+    const therapist = req.user.perfilInfo; // Pega o id do terapeuta
+    if (req.user.role != "therapist") {
+      return res.status(400).json({ message: "Usuário não é terapeuta" });
+    }
+
+    // Retorna as configurações do terapeuta
+    res.status(200).json({
+      available_days: therapist.available_days,
+      start_time: therapist.start_time,
+      end_time: therapist.end_time,
+      accepts_remote: therapist.accepts_remote,
+      accepts_presential: therapist.accepts_presential,
+    });
+  } catch (error) {
+    winston.error(
+      "Erro ao buscar configurações de agendamento do terapeuta:",
+      error
+    );
+    res.status(500).json({
+      message: "Erro interno ao buscar configurações de agendamento.",
+    });
+  }
+};
+
+exports.updateAppointmentSettings = async (req, res) => {
+  try {
+    const therapistId = req.user.perfilInfo.id; 
+    
+    const {
+      available_days,
+      start_time,
+      end_time,
+      accepts_remote,
+      accepts_presential,
+    } = req.body;
+
+    // Validação dos dados recebidos
+    if (!Array.isArray(available_days) || !start_time || !end_time) {
+      return res.status(400).json({
+        message:
+          "Dados inválidos. Por favor, forneça os dias de atendimento e os horários.",
+      });
+    }
+
+    // Verifica se o terapeuta existe
+    const therapist = await Therapist.findByPk(therapistId);
+    if (!therapist) {
+      return res.status(404).json({ message: "Terapeuta não encontrado." });
+    }
+
+    // Atualiza os dados de configuração do terapeuta
+    therapist.available_days = available_days;
+    therapist.start_time = start_time;
+    therapist.end_time = end_time;
+    therapist.accepts_remote = accepts_remote;
+    therapist.accepts_presential = accepts_presential;
+
+    // Salva as alterações no banco
+    await therapist.save();
+
+    res.status(200).json({
+      message: "Configurações de agendamento atualizadas com sucesso!",
+    });
+  } catch (error) {
+    winston.error(
+      "Erro ao atualizar configurações de agendamento do terapeuta:",
+      error
+    );
+    res.status(500).json({
+      message: "Erro interno ao atualizar configurações de agendamento.",
     });
   }
 };

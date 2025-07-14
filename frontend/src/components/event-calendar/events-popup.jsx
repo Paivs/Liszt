@@ -94,7 +94,7 @@ export function EventsPopup({
       </div>
       <div className="space-y-2 p-3">
         {events.length === 0 ? (
-          <div className="text-muted-foreground py-2 text-sm">No events</div>
+          <div className="text-muted-foreground py-2 text-sm">Sem sessões</div>
         ) : (
           events.map((event) => {
             const eventStart = new Date(event.start)

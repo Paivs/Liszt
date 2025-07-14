@@ -51,6 +51,9 @@ async function createTherapists() {
         phone: therapist.phone,
         crp: therapist.crp,
         verified: true,
+        accepts_remote: true,
+        available_days: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"],
+        accepts_presential: true,
       });
 
       console.log(`✅ Terapeuta criado: ${therapist.name}`);
@@ -58,7 +61,8 @@ async function createTherapists() {
 
     console.log("🎉 Todos os terapeutas foram criados com sucesso.");
   } catch (error) {
-    console.error("❌ Erro ao criar terapeutas:", error.message);
+    console.error(error);
+    // console.error("❌ Erro ao criar terapeutas:", error.message);
   } finally {
     await sequelize.close();
     console.log("🔒 Conexão com o banco encerrada.");

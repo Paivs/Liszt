@@ -5,7 +5,7 @@ export const EventHeight = 24
 export const EventGap = 4
 
 // Height of hour cells in week and day views - controls the scale of time display
-export const WeekCellsHeight = 64
+export const WeekCellsHeight = 56
 
 // Number of days to show in the agenda view
 export const AgendaDaysToShow = 30
@@ -15,5 +15,5 @@ export const StartHour = 8
 export const EndHour = 18
 
 // Default start and end times
-export const DefaultStartHour = 9 // 9 AM
-export const DefaultEndHour = 10 // 10 AM
+export const DefaultStartHour = "08" // 9 AM
+export const DefaultEndHour = "09" // 10 AM

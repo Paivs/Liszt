@@ -210,7 +210,7 @@ export function WeekView({
             <div className="border-border/70 relative border-r">
               <span
                 className="text-muted-foreground/70 absolute bottom-0 left-0 h-6 w-16 max-w-full pe-2 text-right text-[10px] sm:pe-4 sm:text-xs">
-                All day
+                Todo o dia
               </span>
             </div>
             {days.map((day, dayIndex) => {

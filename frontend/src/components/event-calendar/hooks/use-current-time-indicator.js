@@ -32,9 +32,9 @@ export function useCurrentTimeIndicator(
       // Check if current day is in view based on the calendar view
       let isCurrentTimeVisible = false
 
-      if (view === "day") {
+      if (view === "dia") {
         isCurrentTimeVisible = isSameDay(now, currentDate)
-      } else if (view === "week") {
+      } else if (view === "semana") {
         const startOfWeekDate = startOfWeek(currentDate, { weekStartsOn: 0 })
         const endOfWeekDate = endOfWeek(currentDate, { weekStartsOn: 0 })
         isCurrentTimeVisible = isWithinInterval(now, {

@@ -16,30 +16,34 @@ CREATE TABLE users (
 -- Tabela de terapeutas (com dados específicos)
 CREATE TABLE therapist (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE, -- Referência ao usuário (therapist)
-    name VARCHAR(255) NOT NULL, -- Nome completo do terapeuta
-    cpf VARCHAR(20) UNIQUE, -- CPF (se pessoa física)
-    email VARCHAR(255) UNIQUE, -- Email do terapeuta
-    phone VARCHAR(20), -- Telefone de contato
-    address TEXT, -- Endereço completo
-    
-    accepts_local BOOLEAN,
-    available_days TEXT[], -- ex: ["Seg", "Qua", "Sex"]
-    price NUMERIC(10,2),
+    user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
 
-    profile_picture TEXT, 
-    bio TEXT, 
-    verified BOOLEAN DEFAULT FALSE, -- Se o terapeuta foi verificado/admin aprovado.
-    visibility BOOLEAN DEFAULT TRUE, -- Se o terapeuta está visível na plataforma.
+    name VARCHAR(255) NOT NULL,
+    cpf VARCHAR(20) UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    phone VARCHAR(20),
+    address TEXT,
+    price NUMERIC(10,2),
+    profile_picture TEXT,
+    bio TEXT,
+    verified BOOLEAN DEFAULT FALSE,
+    visibility BOOLEAN DEFAULT TRUE,
     crp VARCHAR(20),
     specialties TEXT[],
     approach TEXT,
-    
-    last_login TIMESTAMP, -- Último login na plataforma.
+
+    available_days TEXT[] DEFAULT '{"Segunda", "Terça", "Quarta", "Quinta", "Sexta"}',
+    start_time TIME DEFAULT '08:00',
+    end_time TIME DEFAULT '18:00',
+    accepts_remote BOOLEAN DEFAULT FALSE,
+    accepts_presential BOOLEAN DEFAULT TRUE,
+
+    last_login TIMESTAMP,
     deactivated_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de criação
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Data de atualização
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 CREATE TABLE admin (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -109,6 +113,9 @@ CREATE TABLE appointment (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Adiciona índice para melhorar a performance nas buscas por terapeuta
+
 
 -- Índices para otimizar as consultas
 CREATE INDEX idx_appointment_patient_id ON appointment(patient_id);

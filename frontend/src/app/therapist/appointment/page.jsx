@@ -1,5 +1,6 @@
 // app/therapist/appointment/page.jsx
 import AppointmentTherapistClient from "@/components/blocks/therapist/appointment/AppointmentTherapistClient";
+import AppointmentTherapistSettings from "@/components/blocks/therapist/appointment/AppointmentTherapistSettings";
 import { apiServer } from "@/lib/api-server";
 
 export default async function TherapistAdminPage({ searchParams }) {
@@ -13,10 +14,15 @@ export default async function TherapistAdminPage({ searchParams }) {
 
   return (
     <>
-      <div className="p-4">
-        <h1 className="text-2xl font-bold">Painel de Terapeutas</h1>
-        <p className="text-muted-foreground">Gerencie os terapeutas cadastrados na plataforma</p>
+    <div className="w-full flex justify-between items-center p-4">
+
+      <div className="">
+        <h1 className="text-2xl font-bold">Gerenciamento de Sessões</h1>
+        <p className="text-muted-foreground">Administre, crie e edite seus agendamentos</p>
       </div>
+
+      <AppointmentTherapistSettings/>
+    </div>
       <AppointmentTherapistClient initialData={data} meta={meta} />
     </>
   );
