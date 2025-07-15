@@ -135,8 +135,6 @@ export function EventCalendar({
   };
 
   const handleEventCreate = (startTime) => {
-    console.log("Creating new event at:", startTime); // Debug log
-
     // Snap to 15-minute intervals
     const minutes = startTime.getMinutes();
     const remainder = minutes % 15;
@@ -154,8 +152,10 @@ export function EventCalendar({
 
     const newEvent = {
       id: "",
-      title: "",
-      start: startTime,
+      patient: {
+        name: ""
+      },
+      scheduled_time: startTime,
       end: addHoursToDate(startTime, 1),
       allDay: false,
     };
@@ -164,8 +164,6 @@ export function EventCalendar({
   };
 
   const handleEventSave = (event) => {
-    console.log("handleEventSave");
-    console.log(event);
     if (event.id) {
       onEventUpdate?.(event);
     } else {
@@ -194,7 +192,7 @@ export function EventCalendar({
   };
 
   const handleEventUpdate = (data) => {
-    const startDate = new Date(data.start);
+    const startDate = new Date(data.scheduled_time);
     const hours = startDate.getHours();
     const minutes = startDate.getMinutes();
 
@@ -210,16 +208,8 @@ export function EventCalendar({
       localStart.getTime() - localStart.getTimezoneOffset() * 60000
     );
 
-    const payload = {
-      id: data.id,
-      scheduled_time,
-      type_appointment: data.type_appointment || null,
-      location: data.location || null,
-      label: data.label || null,
-      obs: data.description || null,
-    };
 
-    onEventUpdate(payload);
+    onEventUpdate({...data, scheduled_time: scheduled_time});
   };
 
   const viewTitle = useMemo(() => {

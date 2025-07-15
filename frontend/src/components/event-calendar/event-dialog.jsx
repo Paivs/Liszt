@@ -477,7 +477,7 @@ export function EventDialog({ event, isOpen, onClose, onSave, onDelete }) {
             <Label htmlFor="location">Local</Label>
             <Select value={location} onValueChange={setLocation}>
               <SelectTrigger id="location" className="w-full">
-                <SelectValue placeholder="Escolha a localização" />
+                <SelectValue value="remoto">Remoto</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="presencial">Presencial</SelectItem>

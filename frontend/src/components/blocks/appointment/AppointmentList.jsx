@@ -66,7 +66,7 @@ export default function AppointmentList({ agendamentos, onRemoveAppointment }) {
                       </div>
                       <div className="flex items-center space-x-2 text-white/80 mt-1">
                         <User className="h-4 w-4" />
-                        {ag.User && <span>{ag.User.name}</span>}
+                        {ag.therapist && <span>{ag.therapist.name}</span>}
                       </div>
                       <p className="text-white/70 text-sm mt-1">{ag.tipo}</p>
                       {ag.observacoes && (

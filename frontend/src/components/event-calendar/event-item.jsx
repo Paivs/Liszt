@@ -14,10 +14,13 @@ import { ptBR } from "date-fns/locale";
 // 'a' - am/pm
 // ':mm' - minutes with leading zero (only if the token 'mm' is present)
 const formatTimeWithOptionalMinutes = (date) => {
-  return format(date, getMinutes(date) === 0 ? "ha" : "h:mma", {
+  const parsed = new Date(date);
+  if (isNaN(parsed)) return "Horário inválido";
+  return format(parsed, getMinutes(parsed) === 0 ? "ha" : "h:mma", {
     locale: ptBR,
   }).toLowerCase();
 };
+
 
 // Shared wrapper component for event styling
 function EventWrapper({

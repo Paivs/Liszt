@@ -50,13 +50,15 @@ export async function apiFetch(path, options = {}) {
 
     if (!response.ok) {
       if (data?.message) {
-        console.log(data.message);
+        console.error(data.message);
+        throw new Error(data.message)
       } else if (data?.errors) {
-        console.log(data.errors);
+        console.error(data.errors);
+        throw new Error(data.errors)
       } else {
-        console.log(`Erro ${response.status}`);
+        console.error(`Erro ${response.status}`);
+        throw new Error(response.status)
       }
-      return data ?? { error: true };
     }
 
     return data;

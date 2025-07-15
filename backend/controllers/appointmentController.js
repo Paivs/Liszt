@@ -71,158 +71,14 @@ exports.create = async (req, res) => {
   }
 };
 
-exports.createByTherapist = async (req, res) => {
-  const { patient_id, scheduled_time, type_appointment, location, label, obs } =
-    req.body;
-
-  const therapist_id = req.user.perfilInfo.id;
-  const therapist = req.user.perfilInfo;
-
-  if (!patient_id || !scheduled_time || !type_appointment) {
-    return res
-      .status(400)
-      .json({ message: "Todos os campos são obrigatórios." });
-  }
-
-  try {
-    const patient = await Patient.findByPk(patient_id);
-    if (!patient) {
-      return res
-        .status(404)
-        .json({ message: "Paciente não encontrado ou inválido." });
-    }
-
-    // Verifica conflito de horário
-    const existing = await Appointment.findOne({
-      where: { therapist_id, scheduled_time },
-    });
-
-    if (existing) {
-      return res
-        .status(409)
-        .json({ message: "O terapeuta já tem uma sessão nesse horário." });
-    }
-
-    // Validações específicas do terapeuta
-    const appointmentData = {
-      patient_id,
-      scheduled_time,
-      location,
-      type_appointment,
-    };
-
-    const validationErrors = validateAppointmentAgainstTherapist(
-      appointmentData,
-      therapist
-    );
-
-    if (validationErrors.length > 0) {
-      return res.status(400).json({ errors: validationErrors });
-    }
-
-    // Cria a consulta
-    const createdAppointment = await Appointment.create({
-      therapist_id,
-      patient_id,
-      scheduled_time,
-      location,
-      label,
-      type_appointment,
-      status_appointment: "pendente",
-      obs,
-    });
-
-    const newAppointment = await Appointment.findByPk(createdAppointment.id, {
-      include: [
-        {
-          model: Therapist,
-          attributes: ["id", "name", "email"],
-        },
-        {
-          model: Patient,
-          attributes: ["id", "name", "email", "cpf", "phone"],
-        },
-      ],
-      order: [["scheduled_time", "ASC"]],
-    });
-
-    return res.status(201).json({
-      id: newAppointment.id,
-      title: newAppointment.Patient.name,
-      description: newAppointment.obs || "Sem descrição",
-      start: new Date(newAppointment.scheduled_time),
-      end: new Date(newAppointment.scheduled_time.getTime() + 60 * 60 * 1000),
-      patient: newAppointment.Patient.name,
-      patient_doc: newAppointment.Patient,
-      color: newAppointment.label,
-      location: newAppointment.location || "remoto",
-      allDay: false,
-    });
-  } catch (error) {
-    winston.error("Erro ao agendar sessão:", error);
-    console.error(error);
-    return res.status(500).json({ message: "Erro interno do servidor." });
-  }
-};
-
-exports.updateByTherapist = async (req, res) => {
-  const { id } = req.params;
-  const { scheduled_time, type_appointment, location, label, obs } = req.body;
-  const therapist_id = req.user.perfilInfo.id;
-
-  if (!id) {
-    return res
-      .status(400)
-      .json({ message: "ID do agendamento é obrigatório." });
-  }
-
-  try {
-    const appointment = await Appointment.findOne({
-      where: { id, therapist_id },
-    });
-
-    if (!appointment) {
-      return res
-        .status(404)
-        .json({ message: "Sessão não encontrada ou não pertence a você." });
-    }
-
-    await appointment.update({
-      scheduled_time,
-      location,
-      label,
-      type_appointment,
-      obs,
-    });
-
-    const updatedAppointment = await Appointment.findByPk(appointment.id, {
-      include: [
-        {
-          model: Therapist,
-          attributes: ["id", "name", "email"],
-        },
-        {
-          model: Patient,
-          attributes: ["id", "name", "email", "cpf", "phone"],
-        },
-      ],
-    });
-
-    return res.status(200).json(updatedAppointment);
-  } catch (error) {
-    winston.error("Erro ao atualizar sessão:", error);
-    return res.status(500).json({ message: "Erro interno do servidor." });
-  }
-};
-
 exports.getAll = async (req, res) => {
   try {
     const appointments = await Appointment.findAll({
       include: [
         {
-          model: User,
-          as: "therapist", // alias se definido, senão remova
-          attributes: ["id", "name", "email", "role"],
+          model: Therapist,
+          as: "therapist",
+          attributes: ["id", "name", "email"],
         },
         {
           model: Patient,
@@ -341,11 +197,13 @@ exports.getAllByUser = async (req, res) => {
       where: whereClause,
       include: [
         {
-          model: User,
-          attributes: ["id", "name", "email", "role"],
+          model: Therapist,
+          as: "therapist",
+          attributes: ["id", "name", "email"],
         },
         {
           model: Patient,
+          as: "patient",
           attributes: ["id", "name", "email", "cpf", "phone"],
         },
       ],
@@ -549,6 +407,137 @@ exports.getAppointmentSettingsByTherapist = async (req, res) => {
   }
 };
 
+exports.createByTherapist = async (req, res) => {
+  const { patient_id, scheduled_time, type_appointment, location, label, obs } =
+    req.body;
+
+  const therapist_id = req.user.perfilInfo.id;
+  const therapist = req.user.perfilInfo;
+
+  if (!patient_id || !scheduled_time || !type_appointment) {
+    return res
+      .status(400)
+      .json({ message: "Todos os campos são obrigatórios." });
+  }
+
+  try {
+    const patient = await Patient.findByPk(patient_id);
+    if (!patient) {
+      return res
+        .status(404)
+        .json({ message: "Paciente não encontrado ou inválido." });
+    }
+
+    // Verifica conflito de horário
+    const existing = await Appointment.findOne({
+      where: { therapist_id, scheduled_time },
+    });
+
+    if (existing) {
+      return res
+        .status(409)
+        .json({ message: "O terapeuta já tem uma sessão nesse horário." });
+    }
+
+    // Validações específicas do terapeuta
+    const appointmentData = {
+      patient_id,
+      scheduled_time,
+      location,
+      type_appointment,
+    };
+
+    const validationErrors = validateAppointmentAgainstTherapist(
+      appointmentData,
+      therapist
+    );
+
+    if (validationErrors.length > 0) {
+      return res.status(400).json({ errors: validationErrors });
+    }
+
+    // Cria a consulta
+    const createdAppointment = await Appointment.create({
+      therapist_id,
+      patient_id,
+      scheduled_time,
+      location,
+      label,
+      type_appointment,
+      status_appointment: "pendente",
+      obs,
+    });
+
+    const newAppointment = await Appointment.findByPk(createdAppointment.id, {
+      include: [
+        // {
+        //   model: Therapist,
+        //   attributes: ["id", "name", "email"],
+        // },
+        {
+          model: Patient,
+          as: "patient",
+          attributes: ["id", "name", "email", "cpf", "phone"],
+        },
+      ],
+      order: [["scheduled_time", "ASC"]],
+    });
+
+    return res.status(201).json(formattedAppointment(newAppointment));
+  } catch (error) {
+    winston.error("Erro ao agendar sessão:", error);
+    console.error(error);
+    return res.status(500).json({ message: "Erro interno do servidor." });
+  }
+};
+
+exports.updateByTherapist = async (req, res) => {
+  const { id } = req.params;
+  const { scheduled_time, type_appointment, location, label, obs } = req.body;
+  const therapist_id = req.user.perfilInfo.id;
+
+  if (!id) {
+    return res
+      .status(400)
+      .json({ message: "ID do agendamento é obrigatório." });
+  }
+
+  try {
+    const appointment = await Appointment.findOne({
+      where: { id, therapist_id },
+    });
+
+    if (!appointment) {
+      return res
+        .status(404)
+        .json({ message: "Sessão não encontrada ou não pertence a você." });
+    }
+
+    await appointment.update({
+      scheduled_time,
+      location,
+      label,
+      type_appointment,
+      obs,
+    });
+
+    const updatedAppointment = await Appointment.findByPk(appointment.id, {
+      include: [
+        {
+          model: Patient,
+          as: "patient",
+          attributes: ["id", "name", "email", "cpf", "phone"],
+        },
+      ],
+    });
+
+    return res.status(200).json(formattedAppointment(updatedAppointment));
+  } catch (error) {
+    winston.error("Erro ao atualizar sessão:", error);
+    return res.status(500).json({ message: "Erro interno do servidor." });
+  }
+};
+
 exports.updateAppointmentSettings = async (req, res) => {
   try {
     const therapistId = req.user.perfilInfo.id;
@@ -597,6 +586,20 @@ exports.updateAppointmentSettings = async (req, res) => {
       message: "Erro interno ao atualizar configurações de agendamento.",
     });
   }
+};
+
+const formattedAppointment = (appointment) => {
+  const start = new Date(appointment.scheduled_time);
+  const end = new Date(start);
+  end.setHours(end.getHours() + 1);
+
+  const plain = appointment.get({ plain: true });
+
+  return {
+    ...plain,
+    end,
+    allDay: false,
+  };
 };
 
 async function getPatientByUser(id) {

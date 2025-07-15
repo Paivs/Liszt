@@ -48,8 +48,11 @@ export function useTherapistAppointment(initialData = [], initialMeta = {}) {
 
   const updateAppointment = async (data) => {
     try {
-      await api.put(`appointment/therapist/${data.id}`, data);
+      console.log(data);
+      const newData = await api.put(`appointment/therapist/${data.id}`, data);
+      console.log(newData);
       toast.success("Sessão atualizada com sucesso.");
+      return newData
     } catch (error) {
       toast.error("Erro ao atualizar sessão.");
     }

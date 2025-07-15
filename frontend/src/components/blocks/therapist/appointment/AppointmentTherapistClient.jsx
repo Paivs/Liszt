@@ -54,12 +54,11 @@ const AppointmentTherapistClient = ({ initialData, meta }) => {
 
     setAppointments([...appointments, newAppointment]);
   };
-  console.log(appointments);
 
   const handleAppointmentUpdate = async (data) => {
-    await updateAppointment(data);
+    const newData = await updateAppointment(data);
     setAppointments(
-      appointments.map((event) => (event.id === data.id ? data : event))
+      appointments.map((event) => (event.id === data.id ? newData : event))
     );
   };
 

@@ -14,7 +14,6 @@ export default async function Agendamento() {
     ]);
 
     terapeutas = terapeutasRes || [];
-    console.log(terapeutasRes)
     agendamentos = agendamentosRes || [];
 
 
