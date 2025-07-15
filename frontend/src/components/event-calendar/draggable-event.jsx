@@ -23,7 +23,7 @@ export function DraggableEvent({
   const [dragHandlePosition, setDragHandlePosition] = useState(null)
 
   // Check if this is a multi-day event
-  const eventStart = new Date(event.start)
+  const eventStart = new Date(event.scheduled_time)
   const eventEnd = new Date(event.end)
   const isMultiDayEvent =
     isMultiDay || event.allDay || differenceInDays(eventEnd, eventStart) >= 1

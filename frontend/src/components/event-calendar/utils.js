@@ -43,7 +43,7 @@ export function getBorderRadiusClasses(isFirstDay, isLastDay) {
  * Check if an event is a multi-day event
  */
 export function isMultiDayEvent(event) {
-  const eventStart = new Date(event.start)
+  const eventStart = new Date(event.scheduled_time)
   const eventEnd = new Date(event.end)
   return event.allDay || eventStart.getDate() !== eventEnd.getDate();
 }
@@ -54,7 +54,7 @@ export function isMultiDayEvent(event) {
 export function getEventsForDay(events, day) {
   return events
     .filter((event) => {
-      const eventStart = new Date(event.start)
+      const eventStart = new Date(event.scheduled_time)
       return isSameDay(day, eventStart);
     })
     .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
@@ -82,7 +82,7 @@ export function getSpanningEventsForDay(events, day) {
   return events.filter((event) => {
     if (!isMultiDayEvent(event)) return false
 
-    const eventStart = new Date(event.start)
+    const eventStart = new Date(event.scheduled_time)
     const eventEnd = new Date(event.end)
 
     // Only include if it's not the start day but is either the end day or a middle day
@@ -95,7 +95,7 @@ export function getSpanningEventsForDay(events, day) {
  */
 export function getAllEventsForDay(events, day) {
   return events.filter((event) => {
-    const eventStart = new Date(event.start)
+    const eventStart = new Date(event.scheduled_time)
     const eventEnd = new Date(event.end)
     return (isSameDay(day, eventStart) ||
     isSameDay(day, eventEnd) || (day > eventStart && day < eventEnd));
@@ -108,7 +108,7 @@ export function getAllEventsForDay(events, day) {
 export function getAgendaEventsForDay(events, day) {
   return events
     .filter((event) => {
-      const eventStart = new Date(event.start)
+      const eventStart = new Date(event.scheduled_time)
       const eventEnd = new Date(event.end)
       return (isSameDay(day, eventStart) ||
       isSameDay(day, eventEnd) || (day > eventStart && day < eventEnd));

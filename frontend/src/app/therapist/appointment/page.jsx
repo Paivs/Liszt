@@ -10,7 +10,7 @@ export default async function TherapistAdminPage({ searchParams }) {
   const limit = 10;
   const search = params.search || "";
 
-  const  { data, meta }  = await apiServer.get(`appointment/paginate-therapist?page=${page}&limit=${limit}&search=${search}&filter=${filter}`);
+  const  { data, meta }  = await apiServer.get(`appointment/paginate-therapist?page=${page}&limit=${limit}&search=${search}&filter=${filter}&view=semana`);
 
   return (
     <>

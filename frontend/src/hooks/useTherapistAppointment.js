@@ -8,19 +8,28 @@ export function useTherapistAppointment(initialData = [], initialMeta = {}) {
   const [meta, setMeta] = useState(initialMeta);
   const [loading, setLoading] = useState(false);
 
-  const fetchAppointments = async ({ search, status, page = 1 }) => {
+  const fetchAppointments = async ({ search, status, view, page = 1 }) => {
     setLoading(true);
     const params = new URLSearchParams();
     if (search) params.set("search", search);
     if (status) params.set("status", status);
+    if (view) params.set("view", view);
     params.set("page", page);
 
     try {
-      const response = await api.get(`paginate-therapist?${params.toString()}`);
-      setAppointments(response.data);
-      setMeta(response.meta);
+      const { data, meta } = await api.get(
+        `appointment/paginate-therapist?${params.toString()}`
+      );
+
+      setAppointments(data || []);
+      setMeta(meta || {});
+      return { data, meta };
     } catch (error) {
       toast.error("Erro ao buscar sessões.");
+      return {
+        data: [],
+        meta: { total: 0, pages: 1, currentPage: 1 },
+      };
     } finally {
       setLoading(false);
     }
@@ -28,16 +37,18 @@ export function useTherapistAppointment(initialData = [], initialMeta = {}) {
 
   const createAppointment = async (data) => {
     try {
-      await api.post("appointments", data);
+      const newAppointment = await api.post("appointment/therapist", data);
       toast.success("Sessão criada com sucesso.");
+      return newAppointment;
     } catch (error) {
+      console.error(error);
       toast.error("Erro ao criar sessão.");
     }
   };
 
-  const updateAppointment = async (id, data) => {
+  const updateAppointment = async (data) => {
     try {
-      await api.put(`appointment/${id}`, data);
+      await api.put(`appointment/therapist/${data.id}`, data);
       toast.success("Sessão atualizada com sucesso.");
     } catch (error) {
       toast.error("Erro ao atualizar sessão.");
@@ -46,10 +57,13 @@ export function useTherapistAppointment(initialData = [], initialMeta = {}) {
 
   const deleteAppointment = async (id) => {
     try {
-      await api.delete(`appointment/${id}`);
-      setAppointments(appointments.filter((appointment) => appointment.id !== id));
+      await api.del(`appointment/${id}`);
+      setAppointments(
+        appointments.filter((appointment) => appointment.id !== id)
+      );
       toast.success("Sessão excluída com sucesso.");
     } catch (error) {
+      console.error(error);
       toast.error("Erro ao excluir sessão.");
     }
   };

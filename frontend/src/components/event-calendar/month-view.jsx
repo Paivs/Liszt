@@ -31,6 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { ptBR } from "date-fns/locale";
 
 export function MonthView({
   currentDate,
@@ -50,7 +51,7 @@ export function MonthView({
   const weekdays = useMemo(() => {
     return Array.from({ length: 7 }).map((_, i) => {
       const date = addDays(startOfWeek(new Date()), i)
-      return format(date, "EEE");
+      return format(date, "EEE", {locale: ptBR});
     });
   }, [])
 
@@ -134,13 +135,13 @@ export function MonthView({
                     }}>
                     <div
                       className="group-data-today:bg-primary group-data-today:text-primary-foreground mt-1 inline-flex size-6 items-center justify-center rounded-full text-sm">
-                      {format(day, "d")}
+                      {format(day, "d", {locale: ptBR})}
                     </div>
                     <div
                       ref={isReferenceCell ? contentRef : null}
                       className="min-h-[calc((var(--event-height)+var(--event-gap))*2)] sm:min-h-[calc((var(--event-height)+var(--event-gap))*3)] lg:min-h-[calc((var(--event-height)+var(--event-gap))*4)]">
                       {sortEvents(allDayEvents).map((event, index) => {
-                        const eventStart = new Date(event.start)
+                        const eventStart = new Date(event.scheduled_time)
                         const eventEnd = new Date(event.end)
                         const isFirstDay = isSameDay(day, eventStart)
                         const isLastDay = isSameDay(day, eventEnd)
@@ -165,10 +166,10 @@ export function MonthView({
                                 <div className="invisible" aria-hidden={true}>
                                   {!event.allDay && (
                                     <span>
-                                      {format(new Date(event.start), "h:mm")}{" "}
+                                      {format(new Date(event.scheduled_time), "h:mm", {locale: ptBR})}{" "}
                                     </span>
                                   )}
-                                  {event.title}
+                                  {event.patient.name}
                                 </div>
                               </EventItem>
                             </div>
@@ -212,11 +213,11 @@ export function MonthView({
                             }>
                             <div className="space-y-2">
                               <div className="text-sm font-medium">
-                                {format(day, "EEE d")}
+                                {format(day, "EEE d", {locale: ptBR})}
                               </div>
                               <div className="space-y-1">
                                 {sortEvents(allEvents).map((event) => {
-                                  const eventStart = new Date(event.start)
+                                  const eventStart = new Date(event.scheduled_time)
                                   const eventEnd = new Date(event.end)
                                   const isFirstDay = isSameDay(day, eventStart)
                                   const isLastDay = isSameDay(day, eventEnd)

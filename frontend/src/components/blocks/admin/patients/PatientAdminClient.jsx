@@ -24,7 +24,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Pencil, Trash2, Eye } from "lucide-react";
-import Pagination from "@/components/ui/pagination";
+import Pagination from "@/components/ui/pagination-1";
 import PatientSearchBar from "@/components/PatientSearchBar";
 
 export default function PatientAdminClient({ initialData, meta }) {

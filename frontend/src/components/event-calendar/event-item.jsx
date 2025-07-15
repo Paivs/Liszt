@@ -1,17 +1,23 @@
 "use client";
-import { useMemo } from "react"
-import { differenceInMinutes, format, getMinutes, isPast } from "date-fns"
+import { useMemo } from "react";
+import { differenceInMinutes, format, getMinutes, isPast } from "date-fns";
 
-import { getBorderRadiusClasses, getEventColorClasses } from "@/components/event-calendar";
-import { cn } from "@/lib/utils"
+import {
+  getBorderRadiusClasses,
+  getEventColorClasses,
+} from "@/components/event-calendar";
+import { cn } from "@/lib/utils";
+import { ptBR } from "date-fns/locale";
 
 // Using date-fns format with custom formatting:
 // 'h' - hours (1-12)
 // 'a' - am/pm
 // ':mm' - minutes with leading zero (only if the token 'mm' is present)
 const formatTimeWithOptionalMinutes = (date) => {
-  return format(date, getMinutes(date) === 0 ? "ha" : "h:mma").toLowerCase();
-}
+  return format(date, getMinutes(date) === 0 ? "ha" : "h:mma", {
+    locale: ptBR,
+  }).toLowerCase();
+};
 
 // Shared wrapper component for event styling
 function EventWrapper({
@@ -26,21 +32,23 @@ function EventWrapper({
   dndListeners,
   dndAttributes,
   onMouseDown,
-  onTouchStart
+  onTouchStart,
 }) {
   // Always use the currentTime (if provided) to determine if the event is in the past
   const displayEnd = currentTime
-    ? new Date(new Date(currentTime).getTime() +
-    (new Date(event.end).getTime() - new Date(event.start).getTime()))
-    : new Date(event.end)
+    ? new Date(
+        new Date(currentTime).getTime() +
+          (new Date(event.end).getTime() - new Date(event.scheduled_time).getTime())
+      )
+    : new Date(event.end);
 
-  const isEventInPast = isPast(displayEnd)
+  const isEventInPast = isPast(displayEnd);
 
   return (
     <button
       className={cn(
         "focus-visible:border-ring focus-visible:ring-ring/50 flex size-full overflow-hidden px-1 text-left font-medium backdrop-blur-md transition outline-none select-none focus-visible:ring-[3px] data-dragging:cursor-grabbing data-dragging:shadow-lg data-past-event:line-through sm:px-2",
-        getEventColorClasses(event.color),
+        getEventColorClasses(event.label),
         getBorderRadiusClasses(isFirstDay, isLastDay),
         className
       )}
@@ -50,7 +58,8 @@ function EventWrapper({
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
       {...dndListeners}
-      {...dndAttributes}>
+      {...dndAttributes}
+    >
       {children}
     </button>
   );
@@ -70,29 +79,32 @@ export function EventItem({
   dndListeners,
   dndAttributes,
   onMouseDown,
-  onTouchStart
+  onTouchStart,
 }) {
-  const eventColor = event.color
+  const eventColor = event.label;
 
   // Use the provided currentTime (for dragging) or the event's actual time
   const displayStart = useMemo(() => {
-    return currentTime || new Date(event.start);
-  }, [currentTime, event.start])
+    return currentTime || new Date(event.scheduled_time);
+  }, [currentTime, event.scheduled_time]);
 
   const displayEnd = useMemo(() => {
     return currentTime
-      ? new Date(new Date(currentTime).getTime() +
-      (new Date(event.end).getTime() - new Date(event.start).getTime()))
+      ? new Date(
+          new Date(currentTime).getTime() +
+            (new Date(event.end).getTime() - new Date(event.scheduled_time).getTime())
+        )
       : new Date(event.end);
-  }, [currentTime, event.start, event.end])
+  }, [currentTime, event.scheduled_time, event.end]);
 
   // Calculate event duration in minutes
   const durationMinutes = useMemo(() => {
     return differenceInMinutes(displayEnd, displayStart);
-  }, [displayStart, displayEnd])
+  }, [displayStart, displayEnd]);
+  
 
   const getEventTime = () => {
-    if (event.allDay) return "All day"
+    if (event.allDay) return "Todo o dia";
 
     // For short events (less than 45 minutes), only show start time
     if (durationMinutes < 45) {
@@ -100,8 +112,11 @@ export function EventItem({
     }
 
     // For longer events, show both start and end time
-    return `${formatTimeWithOptionalMinutes(displayStart)} - ${formatTimeWithOptionalMinutes(displayEnd)}`;
-  }
+    return `${formatTimeWithOptionalMinutes(
+      displayStart
+    )} - ${formatTimeWithOptionalMinutes(displayEnd)}`;
+  };
+  
 
   if (view === "month") {
     return (
@@ -119,7 +134,8 @@ export function EventItem({
         dndListeners={dndListeners}
         dndAttributes={dndAttributes}
         onMouseDown={onMouseDown}
-        onTouchStart={onTouchStart}>
+        onTouchStart={onTouchStart}
+      >
         {children || (
           <span className="truncate">
             {!event.allDay && (
@@ -127,14 +143,14 @@ export function EventItem({
                 {formatTimeWithOptionalMinutes(displayStart)}{" "}
               </span>
             )}
-            {event.title}
+            {event.patient.name}
           </span>
         )}
       </EventWrapper>
     );
   }
 
-  if (view === "week" || view === "day") {
+  if (view === "week") {
     return (
       <EventWrapper
         event={event}
@@ -152,10 +168,11 @@ export function EventItem({
         dndListeners={dndListeners}
         dndAttributes={dndAttributes}
         onMouseDown={onMouseDown}
-        onTouchStart={onTouchStart}>
+        onTouchStart={onTouchStart}
+      >
         {durationMinutes < 45 ? (
           <div className="truncate">
-            {event.title}{" "}
+            {event.patient.name}{" "}
             {showTime && (
               <span className="opacity-70">
                 {formatTimeWithOptionalMinutes(displayStart)}
@@ -164,7 +181,52 @@ export function EventItem({
           </div>
         ) : (
           <>
-            <div className="truncate font-medium">{event.title}</div>
+            <div className="truncate font-medium">{event.patient.name}</div>
+            {showTime && (
+              <div className="truncate font-normal opacity-70 sm:text-[11px]">
+                {getEventTime()}
+                
+              </div>
+            )}
+          </>
+        )}
+      </EventWrapper>
+    );
+  }
+  
+
+  if (view === "day") {
+    return (
+      <EventWrapper
+        event={event}
+        isFirstDay={isFirstDay}
+        isLastDay={isLastDay}
+        isDragging={isDragging}
+        onClick={onClick}
+        className={cn(
+          "py-1",
+          durationMinutes < 45 ? "items-center" : "flex-col",
+          view === "semana" ? "text-[10px] sm:text-xs" : "text-xs",
+          className
+        )}
+        currentTime={currentTime}
+        dndListeners={dndListeners}
+        dndAttributes={dndAttributes}
+        onMouseDown={onMouseDown}
+        onTouchStart={onTouchStart}
+      >
+        {durationMinutes < 45 ? (
+          <div className="truncate">
+            {event.patient.name}{" "}
+            {showTime && (
+              <span className="opacity-70">
+                {formatTimeWithOptionalMinutes(displayStart)}
+              </span>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="truncate font-medium">{event.patient.name}</div>
             {showTime && (
               <div className="truncate font-normal opacity-70 sm:text-[11px]">
                 {getEventTime()}
@@ -189,8 +251,9 @@ export function EventItem({
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
       {...dndListeners}
-      {...dndAttributes}>
-      <div className="text-sm font-medium">{event.title}</div>
+      {...dndAttributes}
+    >
+      <div className="text-sm font-medium">{event.patient.name}</div>
       <div className="text-xs opacity-70">
         {event.allDay ? (
           <span>Todo o dia</span>
@@ -207,8 +270,8 @@ export function EventItem({
           </>
         )}
       </div>
-      {event.description && (
-        <div className="my-1 text-xs opacity-90">{event.description}</div>
+      {event.obs && (
+        <div className="my-1 text-xs opacity-90">{event.obs}</div>
       )}
     </button>
   );

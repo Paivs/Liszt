@@ -30,6 +30,7 @@ import {
   StartHour,
 } from "@/components/event-calendar/constants"
 import { cn } from "@/lib/utils"
+import { ptBR } from "date-fns/locale";
 
 export function WeekView({
   currentDate,
@@ -61,7 +62,7 @@ export function WeekView({
         return event.allDay || isMultiDayEvent(event);
       })
       .filter((event) => {
-        const eventStart = new Date(event.start)
+        const eventStart = new Date(event.scheduled_time)
         const eventEnd = new Date(event.end)
         return days.some((day) =>
           isSameDay(day, eventStart) ||
@@ -78,7 +79,7 @@ export function WeekView({
         // Skip all-day events and multi-day events
         if (event.allDay || isMultiDayEvent(event)) return false
 
-        const eventStart = new Date(event.start)
+        const eventStart = new Date(event.scheduled_time)
         const eventEnd = new Date(event.end)
 
         // Check if event is on this day
@@ -88,8 +89,8 @@ export function WeekView({
 
       // Sort events by start time and duration
       const sortedEvents = [...dayEvents].sort((a, b) => {
-        const aStart = new Date(a.start)
-        const bStart = new Date(b.start)
+        const aStart = new Date(a.scheduled_time)
+        const bStart = new Date(b.scheduled_time)
         const aEnd = new Date(a.end)
         const bEnd = new Date(b.end)
 
@@ -111,7 +112,7 @@ export function WeekView({
       const columns = []
 
       sortedEvents.forEach((event) => {
-        const eventStart = new Date(event.start)
+        const eventStart = new Date(event.scheduled_time)
         const eventEnd = new Date(event.end)
 
         // Adjust start and end times if they're outside this day
@@ -141,7 +142,7 @@ export function WeekView({
           } else {
             const overlaps = col.some((c) =>
               areIntervalsOverlapping({ start: adjustedStart, end: adjustedEnd }, {
-                start: new Date(c.event.start),
+                start: new Date(c.event.scheduled_time),
                 end: new Date(c.event.end),
               }))
             if (!overlaps) {
@@ -190,7 +191,7 @@ export function WeekView({
       <div
         className="bg-background/80 border-border/70 sticky top-0 z-30 grid grid-cols-8 border-b backdrop-blur-md">
         <div className="text-muted-foreground/70 py-2 text-center text-sm">
-          <span className="max-[479px]:sr-only">{format(new Date(), "O")}</span>
+          <span className="max-[479px]:sr-only">{format(new Date(), "O", {locale: ptBR})}</span>
         </div>
         {days.map((day) => (
           <div
@@ -198,9 +199,9 @@ export function WeekView({
             className="data-today:text-foreground text-muted-foreground/70 py-2 text-center text-sm data-today:font-medium"
             data-today={isToday(day) || undefined}>
             <span className="sm:hidden" aria-hidden="true">
-              {format(day, "E")[0]} {format(day, "d")}
+              {format(day, "E", {locale: ptBR})[0]} {format(day, "d", {locale: ptBR})}
             </span>
-            <span className="max-sm:hidden">{format(day, "EEE dd")}</span>
+            <span className="max-sm:hidden">{format(day, "EEE dd", {locale: ptBR})}</span>
           </div>
         ))}
       </div>
@@ -215,7 +216,7 @@ export function WeekView({
             </div>
             {days.map((day, dayIndex) => {
               const dayAllDayEvents = allDayEvents.filter((event) => {
-                const eventStart = new Date(event.start)
+                const eventStart = new Date(event.scheduled_time)
                 const eventEnd = new Date(event.end)
                 return (isSameDay(day, eventStart) ||
                 (day > eventStart && day < eventEnd) || isSameDay(day, eventEnd));
@@ -227,7 +228,7 @@ export function WeekView({
                   className="border-border/70 relative border-r p-1 last:border-r-0"
                   data-today={isToday(day) || undefined}>
                   {dayAllDayEvents.map((event) => {
-                    const eventStart = new Date(event.start)
+                    const eventStart = new Date(event.scheduled_time)
                     const eventEnd = new Date(event.end)
                     const isFirstDay = isSameDay(day, eventStart)
                     const isLastDay = isSameDay(day, eventEnd)
@@ -249,7 +250,7 @@ export function WeekView({
                         <div
                           className={cn("truncate", !shouldShowTitle && "invisible")}
                           aria-hidden={!shouldShowTitle}>
-                          {event.title}
+                          {event.patient.name}
                         </div>
                       </EventItem>
                     );
@@ -269,7 +270,7 @@ export function WeekView({
               {index > 0 && (
                 <span
                   className="bg-background text-muted-foreground/70 absolute -top-3 left-0 flex h-6 w-16 max-w-full items-center justify-end pe-2 text-[10px] sm:pe-4 sm:text-xs">
-                  {format(hour, "h a")}
+                  {format(hour, "h a", {locale: ptBR})}
                 </span>
               )}
             </div>

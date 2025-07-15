@@ -4,9 +4,28 @@ import { useState, useEffect } from "react";
 import { EventCalendar } from "@/components/event-calendar";
 import { Button } from "@/components/ui/button";
 import { addDays, setHours, setMinutes } from "date-fns";
+import { useTherapistAppointment } from "@/hooks/useTherapistAppointment";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const AppointmentTherapistClient = ({ initialData, meta }) => {
   const [appointments, setAppointments] = useState(initialData);
+  const [view, setView] = useState("semana");
+  const [metaState, setMetaState] = useState(meta || {});
+  const [currentPage, setCurrentPage] = useState(meta?.currentPage || 1);
+
+  const {
+    createAppointment,
+    updateAppointment,
+    fetchAppointments,
+    deleteAppointment,
+  } = useTherapistAppointment();
 
   useEffect(() => {
     setAppointments(initialData);
@@ -29,58 +48,109 @@ const AppointmentTherapistClient = ({ initialData, meta }) => {
     }
   }
 
-  const handleEventAdd = (event) => {
-    setAppointments([...appointments, event]);
-  };
+  const handleAppointmentAdd = async (data) => {
+    const newAppointment = await createAppointment(data);
+    console.log(newAppointment);
 
-  const handleEventUpdate = (updatedEvent) => {
+    setAppointments([...appointments, newAppointment]);
+  };
+  console.log(appointments);
+
+  const handleAppointmentUpdate = async (data) => {
+    await updateAppointment(data);
     setAppointments(
-      appointments.map((event) =>
-        event.id === updatedEvent.id ? updatedEvent : event
-      )
+      appointments.map((event) => (event.id === data.id ? data : event))
     );
   };
 
-  const handleEventDelete = (eventId) => {
+  const handleAppointmentDelete = async (eventId) => {
+    await deleteAppointment(eventId);
     setAppointments(appointments.filter((event) => event.id !== eventId));
   };
 
-  const handleViewChange = (view) => {
-    console.log(view);
+  const handleViewChange = async (newView) => {
+    if (newView != view) {
+      setView(newView);
+      setCurrentPage(1);
+      const { data, meta } = await fetchAppointments({
+        view: newView,
+        page: 1,
+      });
+      setAppointments(data);
+      setMetaState(meta);
+    }
   };
 
   return (
     <div className="px-4 space-y-6">
       <EventCalendar
         events={appointments}
-        onEventAdd={handleEventAdd}
-        onEventUpdate={handleEventUpdate}
-        onEventDelete={handleEventDelete}
+        onEventAdd={handleAppointmentAdd}
+        onEventUpdate={handleAppointmentUpdate}
+        onEventDelete={handleAppointmentDelete}
         onViewChange={handleViewChange}
         initialView="semana"
       />
 
-      <div className="flex justify-center gap-4 my-2 items-center">
-        <Button
-          disabled={meta.currentPage === 1}
-          onClick={() => {
-            // Lógica para ir para a página anterior
-          }}
-        >
-          Anterior
-        </Button>
-        <span className="text-sm">
-          Página {meta.currentPage} de {meta.pages}
-        </span>
-        <Button
-          disabled={meta.currentPage === meta.pages}
-          onClick={() => {
-            // Lógica para ir para a próxima página
-          }}
-        >
-          Próxima
-        </Button>
-      </div>
+      {view === "agenda" && (
+        <div className="flex justify-center py-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={async () => {
+                    const newPage = currentPage - 1;
+                    const { data, meta } = await fetchAppointments({
+                      view,
+                      page: newPage,
+                    });
+                    setAppointments(data);
+                    setMetaState(meta);
+                    setCurrentPage(newPage);
+                  }}
+                  disabled={currentPage === 1}
+                />
+              </PaginationItem>
+
+              {Array.from({ length: metaState.pages }, (_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    isActive={index + 1 === currentPage}
+                    onClick={async () => {
+                      const newPage = index + 1;
+                      const { data, meta } = await fetchAppointments({
+                        view,
+                        page: newPage,
+                      });
+                      setAppointments(data);
+                      setMetaState(meta);
+                      setCurrentPage(newPage);
+                    }}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={async () => {
+                    const newPage = currentPage + 1;
+                    const { data, meta } = await fetchAppointments({
+                      view,
+                      page: newPage,
+                    });
+                    setAppointments(data);
+                    setMetaState(meta);
+                    setCurrentPage(newPage);
+                  }}
+                  disabled={currentPage === metaState.pages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 };

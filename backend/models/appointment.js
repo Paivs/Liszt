@@ -1,7 +1,7 @@
 // models/session.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-const User = require("./user");
+const Therapist = require("./therapist");
 const Patient = require("./patient");
 const sequelizePaginate = require("sequelize-paginate");
 
@@ -16,7 +16,7 @@ const Appointment = sequelize.define(
     therapist_id: {
       type: DataTypes.UUID,
       references: {
-        model: User,
+        model: Therapist,
         key: "id",
       },
       allowNull: false,
@@ -43,6 +43,15 @@ const Appointment = sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
     },
+    location: {
+      type: DataTypes.STRING(20),
+      defaultValue: "remoto",
+    },
+    label: {
+      type: DataTypes.STRING(25),
+      defaultValue: "sky",
+      allowNull: true,
+    },
   },
   {
     tableName: "appointment",
@@ -53,7 +62,7 @@ const Appointment = sequelize.define(
 );
 
 sequelizePaginate.paginate(Appointment);
-Appointment.belongsTo(User, { foreignKey: "therapist_id" });
+Appointment.belongsTo(Therapist, { foreignKey: "therapist_id" });
 Appointment.belongsTo(Patient, { foreignKey: "patient_id" });
 
 module.exports = Appointment;

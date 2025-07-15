@@ -25,6 +25,7 @@ import {
   StartHour,
 } from "@/components/event-calendar/constants"
 import { cn } from "@/lib/utils"
+import { ptBR } from "date-fns/locale";
 
 export function DayView({
   currentDate,
@@ -43,12 +44,12 @@ export function DayView({
   const dayEvents = useMemo(() => {
     return events
       .filter((event) => {
-        const eventStart = new Date(event.start)
+        const eventStart = new Date(event.scheduled_time)
         const eventEnd = new Date(event.end)
         return (isSameDay(currentDate, eventStart) ||
         isSameDay(currentDate, eventEnd) || (currentDate > eventStart && currentDate < eventEnd));
       })
-      .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+      .sort((a, b) => new Date(a.scheduled_time).getTime() - new Date(b.scheduled_time).getTime());
   }, [currentDate, events])
 
   // Filter all-day events
@@ -74,8 +75,8 @@ export function DayView({
 
     // Sort events by start time and duration
     const sortedEvents = [...timeEvents].sort((a, b) => {
-      const aStart = new Date(a.start)
-      const bStart = new Date(b.start)
+      const aStart = new Date(a.scheduled_time)
+      const bStart = new Date(b.scheduled_time)
       const aEnd = new Date(a.end)
       const bEnd = new Date(b.end)
 
@@ -93,7 +94,7 @@ export function DayView({
     const columns = []
 
     sortedEvents.forEach((event) => {
-      const eventStart = new Date(event.start)
+      const eventStart = new Date(event.scheduled_time)
       const eventEnd = new Date(event.end)
 
       // Adjust start and end times if they're outside this day
@@ -123,7 +124,7 @@ export function DayView({
           const overlaps = col.some((c) =>
             areIntervalsOverlapping(
               { start: adjustedStart, end: adjustedEnd },
-              { start: new Date(c.event.start), end: new Date(c.event.end) }
+              { start: new Date(c.event.scheduled_time), end: new Date(c.event.end) }
             ))
           if (!overlaps) {
             placed = true
@@ -176,7 +177,7 @@ export function DayView({
             </div>
             <div className="border-border/70 relative border-r p-1 last:border-r-0">
               {allDayEvents.map((event) => {
-                const eventStart = new Date(event.start)
+                const eventStart = new Date(event.scheduled_time)
                 const eventEnd = new Date(event.end)
                 const isFirstDay = isSameDay(currentDate, eventStart)
                 const isLastDay = isSameDay(currentDate, eventEnd)
@@ -189,8 +190,8 @@ export function DayView({
                     view="month"
                     isFirstDay={isFirstDay}
                     isLastDay={isLastDay}>
-                    {/* Always show the title in day view for better usability */}
-                    <div>{event.title}</div>
+                    {/* Always show the patient.name in day view for better usability */}
+                    <div>{event.patient.name}</div>
                   </EventItem>
                 );
               })}
@@ -208,7 +209,7 @@ export function DayView({
               {index > 0 && (
                 <span
                   className="bg-background text-muted-foreground/70 absolute -top-3 left-0 flex h-6 w-16 max-w-full items-center justify-end pe-2 text-[10px] sm:pe-4 sm:text-xs">
-                  {format(hour, "h a")}
+                  {format(hour, "h a", {locale: ptBR})}
                 </span>
               )}
             </div>

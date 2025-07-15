@@ -45,7 +45,9 @@ exports.listPaginated = async (req, res) => {
     });
   } catch (error) {
     console.error("Erro na paginação:", error);
-    res.status(500).json({ message: "Erro ao listar pacientes com paginação." });
+    res
+      .status(500)
+      .json({ message: "Erro ao listar pacientes com paginação." });
   }
 };
 
@@ -82,19 +84,16 @@ exports.createPatient = async (req, res) => {
       phone,
       emergency_contact_name,
       emergency_contact_phone,
-      address
-    })
+      address,
+    });
 
-    res
-      .status(201)
-      .json({ patient: patient })
-
+    res.status(201).json({ patient: patient });
   } catch (error) {}
 };
 
 exports.deletePatientAndUser = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
 
     // Buscar o paciente para pegar o user_id
     const patient = await Patient.findByPk(id);
@@ -110,10 +109,14 @@ exports.deletePatientAndUser = async (req, res) => {
     // Deletar o usuário vinculado
     await User.destroy({ where: { id: userId } });
 
-    res.status(200).json({ message: "Paciente e usuário deletados com sucesso" });
+    res
+      .status(200)
+      .json({ message: "Paciente e usuário deletados com sucesso" });
   } catch (error) {
     winston.error("Erro ao deletar paciente e usuário:", error);
-    res.status(500).json({ message: "Erro interno ao deletar paciente e usuário." });
+    res
+      .status(500)
+      .json({ message: "Erro interno ao deletar paciente e usuário." });
   }
 };
 
@@ -152,6 +155,32 @@ exports.updatePatient = async (req, res) => {
   }
 };
 
+exports.searchPatient = async (req, res) => {
+  const { term } = req.query;
 
+  if (!term) {
+    return res.status(400).json({ message: "Parâmetro 'term' é obrigatório." });
+  }
 
+  try {
+    const patients = await Patient.findAll({
+      where: {
+        [Op.or]: [
+          { name: { [Op.iLike]: `%${term}%` } },
+          { cpf: { [Op.eq]: term } },
+        ],
+      },
+      order: [["name", "ASC"]],
+      limit: 5,
+    });
 
+    if (patients.length === 0) {
+      return res.status(404).json({ message: "Nenhum paciente encontrado." });
+    }
+
+    return res.status(200).json(patients);
+  } catch (error) {
+    winston.error("Erro ao buscar paciente:", error);
+    res.status(500).json({ message: "Erro interno ao buscar paciente." });
+  }
+};

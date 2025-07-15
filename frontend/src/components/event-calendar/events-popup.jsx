@@ -4,6 +4,7 @@ import { format, isSameDay } from "date-fns"
 import { XIcon } from "lucide-react"
 
 import { EventItem } from "@/components/event-calendar";
+import { ptBR } from "date-fns/locale";
 
 export function EventsPopup({
   date,
@@ -19,7 +20,7 @@ export function EventsPopup({
     const handleClickOutside = (event) => {
       if (
         popupRef.current &&
-        !popupRef.current.contains(event.target)
+        !popupRef.current.contains(target)
       ) {
         onClose()
       }
@@ -34,7 +35,7 @@ export function EventsPopup({
   // Handle escape key to close popup
   useEffect(() => {
     const handleEscKey = (event) => {
-      if (event.key === "Escape") {
+      if (key === "Escape") {
         onClose()
       }
     }
@@ -84,7 +85,7 @@ export function EventsPopup({
       }}>
       <div
         className="bg-background sticky top-0 flex items-center justify-between border-b p-3">
-        <h3 className="font-medium">{format(date, "d MMMM yyyy")}</h3>
+        <h3 className="font-medium">{format(date, "d MMMM yyyy", {locale: ptBR})}</h3>
         <button
           onClick={onClose}
           className="hover:bg-muted rounded-full p-1"
@@ -97,7 +98,7 @@ export function EventsPopup({
           <div className="text-muted-foreground py-2 text-sm">Sem sessões</div>
         ) : (
           events.map((event) => {
-            const eventStart = new Date(event.start)
+            const eventStart = new Date(event.scheduled_time)
             const eventEnd = new Date(event.end)
             const isFirstDay = isSameDay(date, eventStart)
             const isLastDay = isSameDay(date, eventEnd)

@@ -45,13 +45,13 @@ Patient.hasMany(DreamJournal, {
 DreamJournal.belongsTo(Patient, { foreignKey: "patient_id" });
 
 // Relacionamentos de agendamentos
-User.hasMany(Appointment, {
+Therapist.hasMany(Appointment, {
   foreignKey: "therapist_id",
   onDelete: "CASCADE",
   hooks: true,
 });
 // Appointment.belongsTo(User, { foreignKey: 'therapist_id', onDelete: 'CASCADE' });
-Appointment.belongsTo(User, { foreignKey: "therapist_id", as: "therapist" });
+Appointment.belongsTo(Therapist, { foreignKey: "therapist_id", as: "therapist" });
 Appointment.belongsTo(Patient, { foreignKey: "patient_id", as: "patient" });
 
 Patient.hasMany(Appointment, { foreignKey: "patient_id", onDelete: "CASCADE" });

@@ -6,22 +6,18 @@ import { ProfileIncompleteError } from "./errors";
 
 export function getTokenFromCookie(ctx) {
   if (ctx && ctx.req) {
-    // Estamos no servidor (getServerSideProps)
     const cookie = ctx.req.headers.cookie || "";
     const match = cookie.match(/(^|;)\s*token=([^;]*)/);
     return match ? match[2] : null;
   } else if (typeof window !== "undefined") {
-    // Cliente
     const match = document.cookie.match(/(^|;)\s*token=([^;]*)/);
     return match ? match[2] : null;
   }
   return null;
 }
 
-// Função genérica
 export async function apiFetch(path, options = {}) {
   const token = getTokenFromCookie();
-
   const headers = {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
@@ -29,45 +25,46 @@ export async function apiFetch(path, options = {}) {
   };
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/${path}`, {
-      ...options,
-      headers,
-    });
-
-    if (res.status === 403) {
-      const data = await res.json();
-      if (data.code === "PROFILE_INCOMPLETE") {
-        // toast.warning("Complete o login para continuar!");
-        // setTimeout(() => redirectToCompleteRegister(), 2500);
-        throw new ProfileIncompleteError();
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}api/${path}`,
+      {
+        ...options,
+        headers,
       }
+    );
+
+    const contentType = response.headers.get("content-type");
+    const isJson = contentType && contentType.includes("application/json");
+    const data = isJson ? await response.json() : null;
+
+    if (response.status === 403 && data?.code === "PROFILE_INCOMPLETE") {
+      throw new ProfileIncompleteError();
     }
 
-    // Token expirado
-    if (res.status === 401) {
+    if (response.status === 401) {
       toast.error("Sessão expirada. Faça login novamente.");
       document.cookie = "token=; Max-Age=0; path=/";
       setTimeout(() => redirectToLogin(), 2500);
-      // throw new Error("Sessão expirada");u
+      return null;
     }
 
-    if (res.status === 406) {
-      return res.json();
+    if (!response.ok) {
+      if (data?.message) {
+        console.log(data.message);
+      } else if (data?.errors) {
+        console.log(data.errors);
+      } else {
+        console.log(`Erro ${response.status}`);
+      }
+      return data ?? { error: true };
     }
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      // toast.error(errorData.message || "Erro ao comunicar com o servidor.");
-      console.log(errorData.message || "Erro de requisição");
-    }
-
-    return res.json();
+    return data;
   } catch (err) {
-    // console.error("Erro no apiFetch:", err);
     if (!err.handled) {
-      // toast.error("Erro inesperado");
+      console.error("Erro inesperado no apiFetch:", err);
     }
-    // throw err;
+    return { error: true, message: err.message };
   }
 }
 

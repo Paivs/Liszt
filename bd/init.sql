@@ -104,12 +104,14 @@ CREATE TABLE dream_journal (
 -- Tabela de Appointment (agendamento de sessões de terapia)
 CREATE TABLE appointment (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    therapist_id UUID REFERENCES users(id) ON DELETE CASCADE,  -- Terapeuta responsável pela sessão
+    therapist_id UUID REFERENCES therapist(id) ON DELETE CASCADE,  -- Terapeuta responsável pela sessão
     patient_id UUID REFERENCES patient(id) ON DELETE CASCADE,    -- Paciente que será atendido
     scheduled_time TIMESTAMP NOT NULL,  -- Data e hora agendada para a sessão
     type_appointment VARCHAR(100), -- individual, casal, familiar, avaliação
     status_appointment varchar(100), -- pendente, aprovada, reprovada, concluída
+    location varchar(20) DEFAULT 'remoto',
     obs TEXT,
+    label VARCHAR(15),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -131,11 +133,11 @@ CREATE TABLE activity_logs (
     created_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
-ALTER TABLE therapist
-  ADD CONSTRAINT therapist_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+-- ALTER TABLE therapist
+--   ADD CONSTRAINT therapist_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE admin
-  ADD CONSTRAINT admin_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+-- ALTER TABLE admin
+--   ADD CONSTRAINT admin_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE patient
-  ADD CONSTRAINT patient_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+-- ALTER TABLE patient
+--   ADD CONSTRAINT patient_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE;

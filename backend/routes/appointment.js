@@ -6,8 +6,10 @@ const {
   deleteAppointment,
   listPaginated,
   listAppointmentsByDateRange,
-  getAppointmentSettingsByTherapist, // Adicionando o método para buscar as configurações
-  updateAppointmentSettings, // Adicionando o método para atualizar as configurações
+  getAppointmentSettingsByTherapist,
+  updateAppointmentSettings, 
+  createByTherapist,
+  updateByTherapist,
 } = require("../controllers/appointmentController");
 const router = express.Router();
 
@@ -21,4 +23,6 @@ router.get("/all", getAllByTherapist);
 router.post("", create);
 router.delete("/:id", deleteAppointment);
 
+router.post("/therapist", createByTherapist);
+router.put("/therapist/:id", updateByTherapist)
 module.exports = router;

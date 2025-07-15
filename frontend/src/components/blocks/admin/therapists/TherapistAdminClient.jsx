@@ -24,7 +24,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Pencil, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
-import Pagination from "@/components/ui/pagination";
+import Pagination from "@/components/ui/pagination-1";
 import { useRouter } from "next/navigation";
 import TherapistSearchBar from "@/components/TherapistSearchBar";
 

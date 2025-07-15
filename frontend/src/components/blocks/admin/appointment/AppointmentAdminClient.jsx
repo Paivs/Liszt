@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Trash2 } from "lucide-react";
-import Pagination from "@/components/ui/pagination";
+import Pagination from "@/components/ui/pagination-1";
 import { useRouter } from "next/navigation";
 import AppointmentFilterBar from "@/components/AppointmentFilterBar";
 
